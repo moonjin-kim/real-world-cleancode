@@ -2,7 +2,7 @@ package com.moonjin.realworld.user.service;
 
 import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
 import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.dto.request.SignupRequest;
+import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +30,7 @@ class UserServiceTest {
     @DisplayName("회원가입 성공")
     void signUpTest1() {
         // given
-        SignupRequest signup = SignupRequest.builder()
+        Signup signup = Signup.builder()
                 .email("realword@gmail.com")
                 .password("realworld123!")
                 .username("RealWorld")
@@ -59,7 +59,7 @@ class UserServiceTest {
                 .build();
         userRepository.save(user);
 
-        SignupRequest signup = SignupRequest.builder()
+        Signup signup = Signup.builder()
                 .email("realword@gmail.com")
                 .password("realworld123!")
                 .username("RealWorld")

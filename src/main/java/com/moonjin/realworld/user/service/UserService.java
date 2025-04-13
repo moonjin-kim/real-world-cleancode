@@ -2,7 +2,8 @@ package com.moonjin.realworld.user.service;
 
 import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
 import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.dto.request.SignupRequest;
+import com.moonjin.realworld.user.dto.request.Signin;
+import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.AuthResponse;
 import com.moonjin.realworld.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,9 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private static final String SESSION_USER_KEY = "user";
 
-    public AuthResponse signup(SignupRequest request) {
+    public AuthResponse signup(Signup request) {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
         if (userOptional.isPresent()) {
             throw new AlreadyExistsEmailException();
@@ -31,4 +33,8 @@ public class UserService {
 
         return AuthResponse.of(user);
     }
+
+//    public String signin(Signin request) {
+//        return
+//    }
 }
