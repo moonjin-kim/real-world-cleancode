@@ -38,4 +38,10 @@ public class UserController {
         log.info(response.toString());
         return response;
     }
+
+//    @GetMapping
+//    @AuthRequired
+//    public String me() {
+//
+//    }
 }
