@@ -1,6 +1,7 @@
 package com.moonjin.realworld.user.service;
 
 import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
+import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
@@ -34,7 +35,12 @@ public class UserService {
         return AuthResponse.of(user);
     }
 
-//    public String signin(Signin request) {
-//        return
-//    }
+    public AuthResponse signin(Signin request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(Unauthorized::new);
+        if (user.authNotPass(request.getPassword())) {
+            throw new Unauthorized();
+        }
+
+        return AuthResponse.of(user);
+    }
 }

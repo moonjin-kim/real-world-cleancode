@@ -34,4 +34,8 @@ public class User {
         this.bio = bio;
         this.image = image;
     }
+
+    public boolean authNotPass(String password) {
+        return !this.password.equals(password);
+    }
 }

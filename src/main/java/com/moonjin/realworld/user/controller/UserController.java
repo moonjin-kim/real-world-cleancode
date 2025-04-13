@@ -1,6 +1,7 @@
 package com.moonjin.realworld.user.controller;
 
 import com.moonjin.realworld.common.annotation.AuthRequired;
+import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.AuthResponse;
 import com.moonjin.realworld.user.service.UserService;
@@ -28,5 +29,12 @@ public class UserController {
     @AuthRequired
     public AuthResponse me(HttpSession httpSession) {
         return (AuthResponse) httpSession.getAttribute(SESSION_USER_KEY);
+    }
+
+    @PostMapping("login")
+    public AuthResponse login(@RequestBody Signin request, HttpSession httpSession) {
+        AuthResponse response = userService.signin(request);
+        httpSession.setAttribute(SESSION_USER_KEY, response);
+        return response;
     }
 }
