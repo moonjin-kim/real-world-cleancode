@@ -6,6 +6,7 @@ import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.request.PutRequest;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
+import com.moonjin.realworld.user.dto.response.Profile;
 import com.moonjin.realworld.user.dto.response.UserDetail;
 import com.moonjin.realworld.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -73,5 +74,12 @@ public class UserService {
         }
 
         return UserDetail.of(findUser);
+    }
+
+    @Transactional
+    public Profile getProfileFrom(String username) {
+        User findUser = userRepository.findByUsername(username).orElseThrow(Unauthorized::new);
+
+        return Profile.of(findUser);
     }
 }
