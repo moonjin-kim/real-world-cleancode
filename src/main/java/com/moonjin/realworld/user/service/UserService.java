@@ -3,10 +3,12 @@ package com.moonjin.realworld.user.service;
 import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
 import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.user.domain.User;
+import com.moonjin.realworld.user.dto.request.PutRequest;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.AuthResponse;
 import com.moonjin.realworld.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,8 @@ public class UserService {
     private final UserRepository userRepository;
     private static final String SESSION_USER_KEY = "user";
 
-    public AuthResponse signup(Signup request) {
+    @Transactional
+    public User signup(Signup request) {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
         if (userOptional.isPresent()) {
             throw new AlreadyExistsEmailException();
@@ -32,15 +35,43 @@ public class UserService {
                 .build();
         userRepository.save(user);
 
-        return AuthResponse.of(user);
+        return user;
     }
 
-    public AuthResponse signin(Signin request) {
+    @Transactional
+    public User signin(Signin request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(Unauthorized::new);
         if (user.authNotPass(request.getPassword())) {
             throw new Unauthorized();
         }
 
-        return AuthResponse.of(user);
+        return user;
+    }
+
+    @Transactional
+    public AuthResponse put(User user, PutRequest request) {
+        User findUser = userRepository.findById(user.getId()).orElseThrow(Unauthorized::new);
+
+        if(request.getEmail() != null) {
+            findUser.putEmail(request.getEmail());
+        }
+
+        if(request.getPassword() != null) {
+            findUser.putPassword(request.getPassword());
+        }
+
+        if(request.getBio() != null) {
+            findUser.putBio(request.getBio());
+        }
+
+        if(request.getImage() != null) {
+            findUser.putImage(request.getImage());
+        }
+
+        if(request.getUsername() != null) {
+            findUser.putUsername(request.getUsername());
+        }
+
+        return AuthResponse.of(findUser);
     }
 }

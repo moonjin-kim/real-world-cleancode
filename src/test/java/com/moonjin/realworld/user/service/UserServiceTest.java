@@ -3,6 +3,7 @@ package com.moonjin.realworld.user.service;
 import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
 import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.user.domain.User;
+import com.moonjin.realworld.user.dto.request.PutRequest;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.AuthResponse;
@@ -90,7 +91,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        AuthResponse result = userService.signin(signin);
+        User result = userService.signin(signin);
 
         // then
         assertEquals("realword@gmail.com", result.getEmail());
@@ -132,5 +133,107 @@ class UserServiceTest {
 
         // then
         assertThrows(Unauthorized.class, () -> userService.signin(signin));
+    }
+
+    @Test
+    @DisplayName("유저의 정보를 수정한다.")
+    void putTest1() {
+        // given
+        User user = User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build();
+        userRepository.save(user);
+
+        PutRequest putRequest = PutRequest
+                .builder()
+                .email("realword@gmail.com")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .username("RealWorld2")
+                .password("realworld1234!")
+                .build();
+
+        // when
+        AuthResponse result = userService.put(user, putRequest);
+
+        // then
+
+        assertEquals("realword@gmail.com", result.getEmail());
+        assertEquals("I like to skateboard", result.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", result.getImage());
+
+        User user2 = userRepository.findAll().iterator().next();
+        assertEquals("realword@gmail.com", user2.getEmail());
+        assertEquals("I like to skateboard", user2.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", user2.getImage());
+    }
+
+    @Test
+    @DisplayName("유저 정보를 수정할 때 request에 포함된 값만 수정된다.")
+    void putTest2() {
+        // given
+        User user = User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build();
+        userRepository.save(user);
+
+        PutRequest putRequest = PutRequest
+                .builder()
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .username("RealWorld2")
+                .password("realworld1234!")
+                .build();
+
+        // when
+        AuthResponse result = userService.put(user, putRequest);
+
+        // then
+
+        assertEquals("realword@gmail.com", result.getEmail());
+        assertEquals("I like to skateboard", result.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", result.getImage());
+        assertEquals("RealWorld2", result.getUsername());
+
+        User user2 = userRepository.findAll().iterator().next();
+        assertEquals("realword@gmail.com", user2.getEmail());
+        assertEquals("I like to skateboard", user2.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", user2.getImage());
+        assertEquals("realworld1234!", user2.getPassword());
+        assertEquals("RealWorld2", user2.getUsername());
+    }
+
+    @Test
+    @DisplayName("유저가 존재하지 않으면 정보를 수정할 수 없다.")
+    void putTest3() {
+        // given
+        User user = User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build();
+        userRepository.save(user);
+
+        User user2 = User.builder()
+                .email("realword2@gmail.com")
+                .password("realworld1234!")
+                .username("RealWorld2")
+                .build();
+
+        PutRequest putRequest = PutRequest
+                .builder()
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .username("RealWorld2")
+                .password("realworld1234!")
+                .build();
+
+        // when
+        // then
+        assertThrows(Unauthorized.class, () -> userService.put(user2, putRequest));
     }
 }

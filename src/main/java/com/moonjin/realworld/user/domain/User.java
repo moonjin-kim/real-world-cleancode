@@ -35,6 +35,31 @@ public class User {
         this.image = image;
     }
 
+    public void putInfo(String bio, String image) {
+        this.bio = bio;
+        this.image = image;
+    }
+
+    public void putEmail(String email) {
+        this.email = email;
+    }
+
+    public void putPassword(String password) {
+        this.password = password;
+    }
+
+    public void putUsername(String username) {
+        this.username = username;
+    }
+
+    public void putBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void putImage(String image) {
+        this.image = image;
+    }
+
     public boolean authNotPass(String password) {
         return !this.password.equals(password);
     }
