@@ -5,25 +5,22 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.moonjin.realworld.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 
-@JsonTypeName("user")
+@JsonTypeName("profile")
 @JsonTypeInfo(include = WRAPPER_OBJECT, use = NAME)
 @Builder
 @Getter
-public class UserDetail {
-    String email;
+public class Profile {
     String username;
     String bio;
     String image;
+    Boolean following;
 
-    public static UserDetail of(User user) {
-        return UserDetail.builder()
-                .email(user.getEmail())
+    public static Profile of(User user) {
+        return Profile.builder()
                 .username(user.getUsername())
                 .bio(user.getBio())
                 .image(user.getImage())
