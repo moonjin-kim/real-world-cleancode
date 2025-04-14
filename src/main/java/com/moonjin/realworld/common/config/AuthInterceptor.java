@@ -3,7 +3,6 @@ package com.moonjin.realworld.common.config;
 import com.moonjin.realworld.common.annotation.AuthRequired;
 import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.common.exception.Unauthorized;
-import com.moonjin.realworld.user.dto.response.AuthResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

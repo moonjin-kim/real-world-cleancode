@@ -6,7 +6,7 @@ import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.request.PutRequest;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
-import com.moonjin.realworld.user.dto.response.AuthResponse;
+import com.moonjin.realworld.user.dto.response.UserDetail;
 import com.moonjin.realworld.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class UserService {
     }
 
     @Transactional
-    public AuthResponse put(User user, PutRequest request) {
+    public UserDetail put(User user, PutRequest request) {
         User findUser = userRepository.findById(user.getId()).orElseThrow(Unauthorized::new);
 
         if(request.getEmail() != null) {
@@ -72,6 +72,6 @@ public class UserService {
             findUser.putUsername(request.getUsername());
         }
 
-        return AuthResponse.of(findUser);
+        return UserDetail.of(findUser);
     }
 }

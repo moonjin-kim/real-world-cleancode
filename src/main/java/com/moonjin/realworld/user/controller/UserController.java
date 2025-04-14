@@ -4,7 +4,7 @@ import com.moonjin.realworld.common.annotation.AuthRequired;
 import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
-import com.moonjin.realworld.user.dto.response.AuthResponse;
+import com.moonjin.realworld.user.dto.response.UserDetail;
 import com.moonjin.realworld.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +20,22 @@ public class UserController {
     private static final String SESSION_USER_KEY = "user";
 
     @PostMapping("")
-    public AuthResponse signUp(@RequestBody Signup request, HttpSession httpSession) {
+    public UserDetail signUp(@RequestBody Signup request, HttpSession httpSession) {
         User user = userService.signup(request);
         httpSession.setAttribute(SESSION_USER_KEY, user);
-        return AuthResponse.of(user);
+        return UserDetail.of(user);
     }
 
     @GetMapping
     @AuthRequired
-    public AuthResponse me(HttpSession httpSession) {
-        return (AuthResponse) httpSession.getAttribute(SESSION_USER_KEY);
+    public UserDetail me(HttpSession httpSession) {
+        return (UserDetail) httpSession.getAttribute(SESSION_USER_KEY);
     }
 
     @PostMapping("login")
-    public AuthResponse login(@RequestBody Signin request, HttpSession httpSession) {
+    public UserDetail login(@RequestBody Signin request, HttpSession httpSession) {
         User user = userService.signin(request);
         httpSession.setAttribute(SESSION_USER_KEY, user);
-        return AuthResponse.of(user);
+        return UserDetail.of(user);
     }
 }

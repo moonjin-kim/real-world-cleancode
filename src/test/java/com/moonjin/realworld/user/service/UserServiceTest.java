@@ -6,7 +6,7 @@ import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.request.PutRequest;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
-import com.moonjin.realworld.user.dto.response.AuthResponse;
+import com.moonjin.realworld.user.dto.response.UserDetail;
 import com.moonjin.realworld.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -156,7 +156,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        AuthResponse result = userService.put(user, putRequest);
+        UserDetail result = userService.put(user, putRequest);
 
         // then
 
@@ -190,7 +190,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        AuthResponse result = userService.put(user, putRequest);
+        UserDetail result = userService.put(user, putRequest);
 
         // then
 
