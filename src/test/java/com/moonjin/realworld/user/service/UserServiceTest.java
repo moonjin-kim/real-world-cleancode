@@ -2,10 +2,12 @@ package com.moonjin.realworld.user.service;
 
 import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
 import com.moonjin.realworld.common.exception.Unauthorized;
+import com.moonjin.realworld.common.exception.UserNotFoundException;
 import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.request.PutRequest;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
+import com.moonjin.realworld.user.dto.response.Profile;
 import com.moonjin.realworld.user.dto.response.UserDetail;
 import com.moonjin.realworld.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -235,5 +237,36 @@ class UserServiceTest {
         // when
         // then
         assertThrows(Unauthorized.class, () -> userService.put(user2, putRequest));
+    }
+
+    @Test
+    @DisplayName("유저 이름으로 프로필을 조회할 수 있다.")
+    void getProfileTest1() {
+        // given
+        User user = User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user);
+
+        // when
+        Profile result = userService.getProfileFrom("RealWorld");
+        // then
+        assertEquals("I like to skateboard", result.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", result.getImage());
+        assertEquals("RealWorld", result.getUsername());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 유저의 프로필을 조회시 에러가 발생한다.")
+    void getProfileTest2() {
+        // given
+
+        // when
+        // then
+        assertThrows(UserNotFoundException.class, () -> userService.getProfileFrom("RealWorld"));
     }
 }

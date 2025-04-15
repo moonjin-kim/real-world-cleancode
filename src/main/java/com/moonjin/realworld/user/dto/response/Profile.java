@@ -19,11 +19,12 @@ public class Profile {
     String image;
     Boolean following;
 
-    public static Profile of(User user) {
+    public static Profile of(User user, boolean following) {
         return Profile.builder()
                 .username(user.getUsername())
                 .bio(user.getBio())
                 .image(user.getImage())
+                .following(following)
                 .build();
     }
 }

@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Entity
 @Table(name = "users")
@@ -25,6 +28,13 @@ public class User {
     private String bio;
     @Column(nullable = true)
     private String image;
+
+    @ManyToMany
+    @JoinTable(name = "user_follows",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "followee_id"))
+    private Set<User> followings = new HashSet<>();
+
 
     @Builder
     public User(String email, String password, String username, String bio, String image) {
@@ -63,4 +73,22 @@ public class User {
     public boolean authNotPass(String password) {
         return !this.password.equals(password);
     }
+
+    public void follow(User userToFollow) {
+        if (this.equals(userToFollow)) {
+            throw new IllegalArgumentException("자기 자신은 팔로우할 수 없습니다.");
+        }
+        if (followings.contains(userToFollow)) {
+            throw new IllegalStateException("이미 팔로우한 사용자입니다.");
+        }
+        followings.add(userToFollow);
+    }
+
+    public void unfollow(User userToUnfollow) {
+        if (!followings.contains(userToUnfollow)) {
+            throw new IllegalStateException("팔로우하고 있지 않은 사용자입니다.");
+        }
+        followings.remove(userToUnfollow);
+    }
+
 }

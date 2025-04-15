@@ -53,4 +53,17 @@ public class UserController {
     public Profile getProfiles(@PathVariable String username) {
         return userService.getProfileFrom(username);
     }
+
+    @PostMapping("/profiles/{username}/follow")
+    public Profile follow(@PathVariable String username, HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute(SESSION_USER_KEY);
+        return userService.follow(user.getId(), username);
+    }
+
+
+    @DeleteMapping("/profiles/{username}/unfollow")
+    public Profile unfollow(@PathVariable String username, HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute(SESSION_USER_KEY);
+        return userService.unFollow(user.getId(), username);
+    }
 }
