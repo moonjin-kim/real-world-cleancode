@@ -3,14 +3,12 @@ package com.moonjin.realworld.user.service;
 import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
 import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.common.exception.UserNotFoundException;
-import com.moonjin.realworld.user.domain.Follow;
 import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.request.PutRequest;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.Profile;
 import com.moonjin.realworld.user.dto.response.UserDetail;
-import com.moonjin.realworld.user.repository.FollowRepository;
 import com.moonjin.realworld.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,6 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final FollowRepository followRepository;
 
     @Transactional
     public User signup(Signup request) {
