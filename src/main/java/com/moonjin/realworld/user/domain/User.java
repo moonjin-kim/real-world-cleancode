@@ -91,4 +91,8 @@ public class User {
         followings.remove(userToUnfollow);
     }
 
+    public Set<User> getFollowings() {
+        return followings;
+    }
+
 }

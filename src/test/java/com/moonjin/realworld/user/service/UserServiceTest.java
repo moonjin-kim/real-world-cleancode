@@ -10,6 +10,7 @@ import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.Profile;
 import com.moonjin.realworld.user.dto.response.UserDetail;
 import com.moonjin.realworld.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -268,5 +269,195 @@ class UserServiceTest {
         // when
         // then
         assertThrows(UserNotFoundException.class, () -> userService.getProfileFrom("RealWorld"));
+    }
+
+    @Test
+    @DisplayName("유저 이름으로 팔로우 할 수 있다.")
+    void followTest1() {
+        // given
+        User follower = User.builder()
+                .email("realword1@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld1")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(follower);
+
+        User followee = User.builder()
+                .email("realword2@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld2")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(followee);
+
+        // when
+        Profile result = userService.follow(follower.getId(), "RealWorld2");
+        // then
+        assertEquals("I like to skateboard", result.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", result.getImage());
+        assertEquals("RealWorld2", result.getUsername());
+        assertEquals(true, result.getFollowing());
+
+        User updatedFollower = userRepository.findByIdWithFollowings(follower.getId()).orElseThrow();
+        assertTrue(updatedFollower.getFollowings().stream()
+                .anyMatch(u -> u.getId().equals(followee.getId())));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 유저를 팔로우 할 수 없다.")
+    void followTest2() {
+        // given
+        User user1 = User.builder()
+                .email("realword1@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld1")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user1);
+
+        // when
+        // then
+        assertThrows(UserNotFoundException.class, () -> userService.follow(user1.getId(), "RealWorld2"));
+    }
+
+    @Test
+    @DisplayName("이미 팔로우한 유저를 팔로우 할 수 없다.")
+    void followTest3() {
+        // given
+        User user1 = User.builder()
+                .email("realword1@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld1")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user1);
+
+        User user2 = User.builder()
+                .email("realword2@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld2")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user2);
+
+        // when
+        userService.follow(user1.getId(), "RealWorld2");
+        // then
+        assertThrows(IllegalStateException.class, () -> userService.follow(user1.getId(), "RealWorld2"));
+    }
+
+    @Test
+    @DisplayName("자기 자신을 팔로우 할 수 없다.")
+    void followTest4() {
+        // given
+        User user1 = User.builder()
+                .email("realword1@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld1")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user1);
+
+        User user2 = User.builder()
+                .email("realword2@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld2")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user2);
+
+        // when
+        userService.follow(user1.getId(), "RealWorld1");
+        // then
+        assertThrows(IllegalArgumentException.class, () -> userService.follow(user1.getId(), "RealWorld2"));
+    }
+
+    @Test
+    @DisplayName("유저 이름으로 팔로우한 유저를 언팔로우 할 수 있다.")
+    void unfollowTest1() {
+        // given
+        User follower = User.builder()
+                .email("realword1@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld1")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(follower);
+
+        User followee = User.builder()
+                .email("realword2@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld2")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(followee);
+        userService.follow(follower.getId(), "RealWorld2");
+
+        // when
+        Profile result = userService.unFollow(follower.getId(), "RealWorld2");
+        // then
+        assertEquals("I like to skateboard", result.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", result.getImage());
+        assertEquals("RealWorld2", result.getUsername());
+        assertEquals(false, result.getFollowing());
+
+        User updatedFollower = userRepository.findByIdWithFollowings(follower.getId()).orElseThrow();
+        assertFalse(updatedFollower.getFollowings().stream()
+                .anyMatch(u -> u.getId().equals(followee.getId())));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 유저를 팔로우 할 수 없다.")
+    void unFollowTest2() {
+        // given
+        User user1 = User.builder()
+                .email("realword1@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld1")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user1);
+
+        // when
+        // then
+        assertThrows(UserNotFoundException.class, () -> userService.follow(user1.getId(), "RealWorld2"));
+    }
+
+    @Test
+    @DisplayName("팔로우하지 않은 유저를 언팔로우 할 수 없다.")
+    void unFollowTest3() {
+        // given
+        User user1 = User.builder()
+                .email("realword1@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld1")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user1);
+
+        User user2 = User.builder()
+                .email("realword2@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld2")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .build();
+        userRepository.save(user2);
+
+        // when
+        // then
+        assertThrows(IllegalStateException.class, () -> userService.unFollow(user1.getId(), "RealWorld2"));
     }
 }

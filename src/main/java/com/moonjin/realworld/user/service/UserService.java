@@ -92,7 +92,7 @@ public class UserService {
         follower.follow(followee);
         userRepository.save(follower);
 
-        return Profile.of(follower, true);
+        return Profile.of(followee, true);
     }
 
     @Transactional
@@ -104,6 +104,6 @@ public class UserService {
         follower.unfollow(followee);
         userRepository.save(follower);
 
-        return Profile.of(follower, false);
+        return Profile.of(followee, false);
     }
 }
