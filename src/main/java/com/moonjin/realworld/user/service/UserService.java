@@ -50,8 +50,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserDetail put(User user, PutRequest request) {
-        User findUser = userRepository.findById(user.getId()).orElseThrow(Unauthorized::new);
+    public UserDetail put(Long userId, PutRequest request) {
+        User findUser = userRepository.findById(userId).orElseThrow(Unauthorized::new);
 
         if(request.getEmail() != null) {
             findUser.putEmail(request.getEmail());

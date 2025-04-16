@@ -11,6 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String username);
     Optional<User> findByUsername(String username);
     Optional<User> findByEmailAndPassword(String email, String password);
-    @Query("select u from User u join fetch u.followings where u.id = :id")
+    @Query("select distinct u from User u left join fetch u.followings where u.id = :id")
     Optional<User> findByIdWithFollowings(@Param("id") Long id);
 }

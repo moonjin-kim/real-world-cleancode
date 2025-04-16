@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -29,12 +30,11 @@ public class User {
     @Column(nullable = true)
     private String image;
 
-    @ManyToMany
-    @JoinTable(name = "user_follows",
-            joinColumns = @JoinColumn(name = "follower_id"),
-            inverseJoinColumns = @JoinColumn(name = "followee_id"))
-    private Set<User> followings = new HashSet<>();
+    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Follow> followings = new HashSet<>();
 
+//    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<Follow> followers = new HashSet<>();
 
     @Builder
     public User(String email, String password, String username, String bio, String image) {
@@ -74,25 +74,43 @@ public class User {
         return !this.password.equals(password);
     }
 
-    public void follow(User userToFollow) {
-        if (this.equals(userToFollow)) {
+    public void follow(User target) {
+        if (this.equals(target)) {
             throw new IllegalArgumentException("자기 자신은 팔로우할 수 없습니다.");
         }
-        if (followings.contains(userToFollow)) {
+        boolean alreadyFollowed = followings.stream()
+                .anyMatch(f -> f.getToUser().equals(target));
+        if (alreadyFollowed) {
             throw new IllegalStateException("이미 팔로우한 사용자입니다.");
         }
-        followings.add(userToFollow);
+
+        Follow follow = Follow.create(this, target);
+        followings.add(follow);
     }
 
-    public void unfollow(User userToUnfollow) {
-        if (!followings.contains(userToUnfollow)) {
-            throw new IllegalStateException("팔로우하고 있지 않은 사용자입니다.");
-        }
-        followings.remove(userToUnfollow);
+    public void unfollow(User target) {
+        Follow follow = this.followings.stream()
+                .filter(f -> f.getFollowing().equals(target))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("팔로우하고 있지 않은 사용자입니다."));
+        this.followings.remove(follow);
+//        target.followers.remove(follow);
     }
 
-    public Set<User> getFollowings() {
+    public Set<Follow> getFollowings() {
         return followings;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

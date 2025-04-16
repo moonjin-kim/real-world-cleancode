@@ -159,7 +159,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        UserDetail result = userService.put(user, putRequest);
+        UserDetail result = userService.put(user.getId(), putRequest);
 
         // then
 
@@ -193,7 +193,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        UserDetail result = userService.put(user, putRequest);
+        UserDetail result = userService.put(user.getId(), putRequest);
 
         // then
 
@@ -221,12 +221,6 @@ class UserServiceTest {
                 .build();
         userRepository.save(user);
 
-        User user2 = User.builder()
-                .email("realword2@gmail.com")
-                .password("realworld1234!")
-                .username("RealWorld2")
-                .build();
-
         PutRequest putRequest = PutRequest
                 .builder()
                 .bio("I like to skateboard")
@@ -237,7 +231,7 @@ class UserServiceTest {
 
         // when
         // then
-        assertThrows(Unauthorized.class, () -> userService.put(user2, putRequest));
+        assertThrows(Unauthorized.class, () -> userService.put(2L, putRequest));
     }
 
     @Test
@@ -303,7 +297,7 @@ class UserServiceTest {
 
         User updatedFollower = userRepository.findByIdWithFollowings(follower.getId()).orElseThrow();
         assertTrue(updatedFollower.getFollowings().stream()
-                .anyMatch(u -> u.getId().equals(followee.getId())));
+                .anyMatch(u -> u.getToUser().equals(followee)));
     }
 
     @Test
@@ -365,19 +359,9 @@ class UserServiceTest {
                 .build();
         userRepository.save(user1);
 
-        User user2 = User.builder()
-                .email("realword2@gmail.com")
-                .password("realworld123!")
-                .username("RealWorld2")
-                .bio("I like to skateboard")
-                .image("https://i.stack.imgur.com/xHWG8.jpg")
-                .build();
-        userRepository.save(user2);
-
         // when
-        userService.follow(user1.getId(), "RealWorld1");
         // then
-        assertThrows(IllegalArgumentException.class, () -> userService.follow(user1.getId(), "RealWorld2"));
+        assertThrows(IllegalArgumentException.class, () -> userService.follow(user1.getId(), "RealWorld1"));
     }
 
     @Test
@@ -413,7 +397,7 @@ class UserServiceTest {
 
         User updatedFollower = userRepository.findByIdWithFollowings(follower.getId()).orElseThrow();
         assertFalse(updatedFollower.getFollowings().stream()
-                .anyMatch(u -> u.getId().equals(followee.getId())));
+                .anyMatch(u -> u.getToUser().equals(followee)));
     }
 
     @Test
@@ -458,6 +442,6 @@ class UserServiceTest {
 
         // when
         // then
-        assertThrows(IllegalStateException.class, () -> userService.unFollow(user1.getId(), "RealWorld2"));
+        assertThrows(IllegalArgumentException.class, () -> userService.unFollow(user1.getId(), "RealWorld2"));
     }
 }

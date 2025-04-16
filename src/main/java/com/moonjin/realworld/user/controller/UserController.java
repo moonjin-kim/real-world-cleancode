@@ -46,7 +46,7 @@ public class UserController {
     @AuthRequired
     public UserDetail put(@RequestBody PutRequest request, HttpSession httpSession) {
         User user = (User) httpSession.getAttribute(SESSION_USER_KEY);
-        return userService.put(user, request);
+        return userService.put(user.getId(), request);
     }
 
     @GetMapping("/profiles/{username}")
