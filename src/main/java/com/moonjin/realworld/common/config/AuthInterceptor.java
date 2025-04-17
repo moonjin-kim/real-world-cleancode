@@ -20,7 +20,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             }
 
             HttpSession session = request.getSession(false);
-            User user = (session != null) ? (User) session.getAttribute("user") : null;
+            Long user = (session != null) ? (Long) session.getAttribute("user") : null;
 
             if (user == null) {
                 throw new Unauthorized();

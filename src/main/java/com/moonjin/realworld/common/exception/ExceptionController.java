@@ -18,17 +18,20 @@ public class ExceptionController {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_GATEWAY)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse invalidRequestHandler(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponse> invalidRequestHandler(MethodArgumentNotValidException e) {
+        log.error(e.getMessage());
         ErrorResponse response = ErrorResponse.builder()
                 .code("400")
                 .message("잘못된 요청입니다.")
                 .build();
 
         for (FieldError fieldError : e.getFieldErrors()) {
+            log.error(e.getMessage());
             response.addValidation(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        return response;
+        return ResponseEntity.status(400)
+                .body(response);
     }
 
     @ResponseBody

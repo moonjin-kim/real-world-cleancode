@@ -94,7 +94,11 @@ public class User {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("팔로우하고 있지 않은 사용자입니다."));
         this.followings.remove(follow);
-//        target.followers.remove(follow);
+    }
+
+    public boolean isFollowing(User target) {
+        return followings.stream()
+                .anyMatch(f -> f.getToUser().equals(target));
     }
 
     public Set<Follow> getFollowings() {

@@ -248,7 +248,7 @@ class UserServiceTest {
         userRepository.save(user);
 
         // when
-        Profile result = userService.getProfileFrom("RealWorld");
+        Profile result = userService.getProfileFrom("RealWorld", user.getId());
         // then
         assertEquals("I like to skateboard", result.getBio());
         assertEquals("https://i.stack.imgur.com/xHWG8.jpg", result.getImage());
@@ -262,7 +262,7 @@ class UserServiceTest {
 
         // when
         // then
-        assertThrows(UserNotFoundException.class, () -> userService.getProfileFrom("RealWorld"));
+        assertThrows(UserNotFoundException.class, () -> userService.getProfileFrom("RealWorld", 1L));
     }
 
     @Test
@@ -401,7 +401,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 유저를 팔로우 할 수 없다.")
+    @DisplayName("존재하지 않는 유저를 언팔로우 할 수 없다.")
     void unFollowTest2() {
         // given
         User user1 = User.builder()

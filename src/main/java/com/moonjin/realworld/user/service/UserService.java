@@ -10,7 +10,7 @@ import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.Profile;
 import com.moonjin.realworld.user.dto.response.UserDetail;
 import com.moonjin.realworld.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -76,10 +76,25 @@ public class UserService {
         return UserDetail.of(findUser);
     }
 
-    public Profile getProfileFrom(String username) {
+    @Transactional(readOnly = true)
+    public UserDetail getUserDetail(Long userId) {
+        User findUser = userRepository.findById(userId).orElseThrow(Unauthorized::new);
+
+        return UserDetail.of(findUser);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Profile getProfileFrom(String username, Long loginUserId) {
         User findUser = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
-        return Profile.of(findUser, false);
+        boolean isFollowing = false;
+        if(loginUserId != null) {
+            User loginUser = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+
+            isFollowing = loginUser.isFollowing(findUser);
+        }
+        return Profile.of(findUser, isFollowing);
     }
 
     @Transactional
