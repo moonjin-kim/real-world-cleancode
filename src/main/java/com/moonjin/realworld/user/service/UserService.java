@@ -29,11 +29,7 @@ public class UserService {
             throw new AlreadyExistsEmailException();
         }
 
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .username(request.getUsername())
-                .build();
+        User user = User.of(request);
         userRepository.save(user);
 
         return user;

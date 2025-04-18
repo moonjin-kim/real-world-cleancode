@@ -1,5 +1,6 @@
 package com.moonjin.realworld.user.domain;
 
+import com.moonjin.realworld.user.dto.request.Signup;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -45,9 +46,12 @@ public class User {
         this.image = image;
     }
 
-    public void putInfo(String bio, String image) {
-        this.bio = bio;
-        this.image = image;
+    public static User of(Signup signup) {
+        return User.builder()
+                .email(signup.getEmail())
+                .password(signup.getPassword())
+                .username(signup.getUsername())
+                .build();
     }
 
     public void putEmail(String email) {
