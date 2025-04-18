@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping("/users")
     public UserDetail signUp(HttpSession httpSession, @RequestBody @Valid Signup request) {
         User user = userService.signup(request);
-        httpSession.setAttribute(SESSION_USER_KEY, user);
+        httpSession.setAttribute(SESSION_USER_KEY, user.getId());
         return UserDetail.of(user);
     }
 
@@ -55,6 +55,7 @@ public class UserController {
     @GetMapping("/profiles/{username}")
     public Profile getProfiles(HttpSession httpSession, @PathVariable String username) {
         Long user = (Long) httpSession.getAttribute(SESSION_USER_KEY);
+        log.info("user: {}", user);
         return userService.getProfileFrom(username, user);
     }
 

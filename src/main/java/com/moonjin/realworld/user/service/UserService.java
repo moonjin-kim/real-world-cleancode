@@ -86,7 +86,7 @@ public class UserService {
 
         boolean isFollowing = false;
         if(loginUserId != null) {
-            User loginUser = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+            User loginUser = userRepository.findById(loginUserId).orElseThrow(UserNotFoundException::new);
 
             isFollowing = loginUser.isFollowing(findUser);
         }

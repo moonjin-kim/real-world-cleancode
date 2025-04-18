@@ -442,6 +442,6 @@ class UserServiceTest {
 
         // when
         // then
-        assertThrows(IllegalArgumentException.class, () -> userService.unFollow(user1.getId(), "RealWorld2"));
+        assertThrows(IllegalStateException.class, () -> userService.unFollow(user1.getId(), "RealWorld2"));
     }
 }

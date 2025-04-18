@@ -6,11 +6,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Slf4j
 @Getter
 @Entity
 @Table(name = "users")
@@ -83,7 +85,7 @@ public class User {
             throw new IllegalArgumentException("자기 자신은 팔로우할 수 없습니다.");
         }
         boolean alreadyFollowed = followings.stream()
-                .anyMatch(f -> f.getToUser().equals(target));
+                .anyMatch(f -> f.getFollowing().equals(target));
         if (alreadyFollowed) {
             throw new IllegalStateException("이미 팔로우한 사용자입니다.");
         }
@@ -93,26 +95,23 @@ public class User {
     }
 
     public void unfollow(User target) {
-        Follow follow = this.followings.stream()
+        Follow follow = followings.stream()
                 .filter(f -> f.getFollowing().equals(target))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("팔로우하고 있지 않은 사용자입니다."));
-        this.followings.remove(follow);
+                .orElseThrow(() -> new IllegalStateException("팔로우하고 있지 않은 사용자입니다."));
+        followings.remove(follow);
     }
 
     public boolean isFollowing(User target) {
         return followings.stream()
-                .anyMatch(f -> f.getToUser().equals(target));
-    }
-
-    public Set<Follow> getFollowings() {
-        return followings;
+                .anyMatch(f -> f.getFollowing().equals(target));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
+        if (this.id == null || user.id == null) return false;
         return Objects.equals(id, user.id);
     }
 
