@@ -81,17 +81,17 @@ public class User {
     }
 
     public void follow(User target) {
-        if (this.equals(target)) {
-            throw new IllegalArgumentException("자기 자신은 팔로우할 수 없습니다.");
-        }
+        validateNotSelf(target);
+        validateNotAlreadyFollowing(target);
+        followings.add(Follow.create(this, target));
+    }
+
+    private void validateNotAlreadyFollowing(User target) {
         boolean alreadyFollowed = followings.stream()
                 .anyMatch(f -> f.getFollowing().equals(target));
         if (alreadyFollowed) {
             throw new IllegalStateException("이미 팔로우한 사용자입니다.");
         }
-
-        Follow follow = Follow.create(this, target);
-        followings.add(follow);
     }
 
     public void unfollow(User target) {
@@ -120,4 +120,9 @@ public class User {
         return Objects.hash(id);
     }
 
+    private void validateNotSelf(User target) {
+        if (this.equals(target)) {
+            throw new IllegalArgumentException("자기 자신은 팔로우할 수 없습니다.");
+        }
+    }
 }
