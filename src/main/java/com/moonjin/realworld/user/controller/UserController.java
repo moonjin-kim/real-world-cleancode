@@ -2,7 +2,7 @@ package com.moonjin.realworld.user.controller;
 
 import com.moonjin.realworld.common.annotation.AuthRequired;
 import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.dto.request.PutRequest;
+import com.moonjin.realworld.user.dto.request.PutUser;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.Profile;
@@ -40,14 +40,14 @@ public class UserController {
 
     @PostMapping("/users/login")
     public UserDetail login(HttpSession httpSession,@RequestBody @Valid Signin request) {
-        User user = userService.signin(request);
+        User user = userService.signIn(request);
         httpSession.setAttribute(SESSION_USER_KEY, user.getId());
         return UserDetail.of(user);
     }
 
     @PutMapping("/users")
     @AuthRequired
-    public UserDetail put(HttpSession httpSession, @RequestBody @Valid PutRequest request) {
+    public UserDetail put(HttpSession httpSession, @RequestBody @Valid PutUser request) {
         Long user = (Long) httpSession.getAttribute(SESSION_USER_KEY);
         return userService.put(user, request);
     }

@@ -2,7 +2,7 @@ package com.moonjin.realworld.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.dto.request.PutRequest;
+import com.moonjin.realworld.user.dto.request.PutUser;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.repository.UserRepository;
@@ -180,7 +180,7 @@ class UserControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(SESSION_USER_KEY, sessionUser.getId());
 
-        PutRequest request = PutRequest.builder()
+        PutUser request = PutUser.builder()
                 .email("test@gmail.com")
                 .username("tester")
                 .password("password")

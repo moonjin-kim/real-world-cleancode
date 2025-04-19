@@ -4,7 +4,7 @@ import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
 import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.common.exception.UserNotFoundException;
 import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.dto.request.PutRequest;
+import com.moonjin.realworld.user.dto.request.PutUser;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.Profile;
@@ -36,7 +36,7 @@ public class UserService {
     }
 
     @Transactional
-    public User signin(Signin request) {
+    public User signIn(Signin request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(Unauthorized::new);
         if (user.authNotPass(request.getPassword())) {
             throw new Unauthorized();
@@ -46,29 +46,10 @@ public class UserService {
     }
 
     @Transactional
-    public UserDetail put(Long userId, PutRequest request) {
+    public UserDetail put(Long userId, PutUser request) {
         User findUser = userRepository.findById(userId).orElseThrow(Unauthorized::new);
 
-        if(request.getEmail() != null) {
-            findUser.putEmail(request.getEmail());
-        }
-
-        if(request.getPassword() != null) {
-            findUser.putPassword(request.getPassword());
-        }
-
-        if(request.getBio() != null) {
-            findUser.putBio(request.getBio());
-        }
-
-        if(request.getImage() != null) {
-            findUser.putImage(request.getImage());
-        }
-
-        if(request.getUsername() != null) {
-            findUser.putUsername(request.getUsername());
-        }
-
+        findUser.patch(request);
         return UserDetail.of(findUser);
     }
 
@@ -112,6 +93,7 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
         User followee = userRepository.findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
+
         follower.unfollow(followee);
         userRepository.save(follower);
 

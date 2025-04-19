@@ -4,13 +4,12 @@ import com.moonjin.realworld.common.exception.AlreadyExistsEmailException;
 import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.common.exception.UserNotFoundException;
 import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.dto.request.PutRequest;
+import com.moonjin.realworld.user.dto.request.PutUser;
 import com.moonjin.realworld.user.dto.request.Signin;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.dto.response.Profile;
 import com.moonjin.realworld.user.dto.response.UserDetail;
 import com.moonjin.realworld.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,7 +78,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("이메일 패스워드로 로그인한다")
-    void signinTest1() {
+    void signInTest1() {
         // given
         User user = User.builder()
                 .email("realword@gmail.com")
@@ -94,7 +93,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        User result = userService.signin(signin);
+        User result = userService.signIn(signin);
 
         // then
         assertEquals("realword@gmail.com", result.getEmail());
@@ -103,7 +102,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("존재하지 않는 계정으로 로그인 시도 시 에러가 발생한다")
-    void signinTest2() {
+    void signInTest2() {
         // given
         Signin signin = Signin.builder()
                 .email("realword@gmail.com")
@@ -113,12 +112,12 @@ class UserServiceTest {
         // when
 
         // then
-        assertThrows(Unauthorized.class, () -> userService.signin(signin));
+        assertThrows(Unauthorized.class, () -> userService.signIn(signin));
     }
 
     @Test
     @DisplayName("잘못된 비밀번호 입력시 에러가 발생한다.")
-    void signinTest3() {
+    void signInTest3() {
         // given
         User user = User.builder()
                 .email("realword@gmail.com")
@@ -135,7 +134,7 @@ class UserServiceTest {
         // when
 
         // then
-        assertThrows(Unauthorized.class, () -> userService.signin(signin));
+        assertThrows(Unauthorized.class, () -> userService.signIn(signin));
     }
 
     @Test
@@ -149,7 +148,7 @@ class UserServiceTest {
                 .build();
         userRepository.save(user);
 
-        PutRequest putRequest = PutRequest
+        PutUser putUser = PutUser
                 .builder()
                 .email("realword@gmail.com")
                 .bio("I like to skateboard")
@@ -159,7 +158,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        UserDetail result = userService.put(user.getId(), putRequest);
+        UserDetail result = userService.put(user.getId(), putUser);
 
         // then
 
@@ -184,7 +183,7 @@ class UserServiceTest {
                 .build();
         userRepository.save(user);
 
-        PutRequest putRequest = PutRequest
+        PutUser putUser = PutUser
                 .builder()
                 .bio("I like to skateboard")
                 .image("https://i.stack.imgur.com/xHWG8.jpg")
@@ -193,7 +192,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        UserDetail result = userService.put(user.getId(), putRequest);
+        UserDetail result = userService.put(user.getId(), putUser);
 
         // then
 
@@ -221,7 +220,7 @@ class UserServiceTest {
                 .build();
         userRepository.save(user);
 
-        PutRequest putRequest = PutRequest
+        PutUser putUser = PutUser
                 .builder()
                 .bio("I like to skateboard")
                 .image("https://i.stack.imgur.com/xHWG8.jpg")
@@ -231,7 +230,7 @@ class UserServiceTest {
 
         // when
         // then
-        assertThrows(Unauthorized.class, () -> userService.put(2L, putRequest));
+        assertThrows(Unauthorized.class, () -> userService.put(2L, putUser));
     }
 
     @Test

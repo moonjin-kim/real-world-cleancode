@@ -1,5 +1,6 @@
 package com.moonjin.realworld.user.domain;
 
+import com.moonjin.realworld.user.dto.request.PutUser;
 import com.moonjin.realworld.user.dto.request.Signup;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -54,6 +56,23 @@ public class User {
                 .password(signup.getPassword())
                 .username(signup.getUsername())
                 .build();
+    }
+
+    public void patch(PutUser request) {
+        Optional.ofNullable(request.getEmail())
+                .ifPresent(this::putEmail);
+
+        Optional.ofNullable(request.getPassword())
+                .ifPresent(this::putPassword);
+
+        Optional.ofNullable(request.getBio())
+                .ifPresent(this::putBio);
+
+        Optional.ofNullable(request.getImage())
+                .ifPresent(this::putImage);
+
+        Optional.ofNullable(request.getUsername())
+                .ifPresent(this::putUsername);
     }
 
     public void putEmail(String email) {
