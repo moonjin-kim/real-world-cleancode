@@ -34,7 +34,6 @@ public class UserController {
     @AuthRequired
     public UserDetail me(HttpSession httpSession) {
         Long user = (Long) httpSession.getAttribute(SESSION_USER_KEY);
-        log.info("user: {}", user);
         return userService.getUserDetail(user);
     }
 
@@ -55,7 +54,6 @@ public class UserController {
     @GetMapping("/profiles/{username}")
     public Profile getProfiles(HttpSession httpSession, @PathVariable String username) {
         Long user = (Long) httpSession.getAttribute(SESSION_USER_KEY);
-        log.info("user: {}", user);
         return userService.getProfileFrom(username, user);
     }
 

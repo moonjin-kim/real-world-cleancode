@@ -1,11 +1,9 @@
 package com.moonjin.realworld.user.domain;
 
-import com.moonjin.realworld.common.exception.UserNotFoundException;
+import com.moonjin.realworld.user.dto.request.PutUser;
 import com.moonjin.realworld.user.dto.request.Signup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -30,7 +28,65 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("비밀번호가 같으면 true를 반환한다.")
+    @DisplayName("유저의 정보를 수정한다.")
+    void putTest1() {
+        // given
+        User user = User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build();
+
+        PutUser request = PutUser
+                .builder()
+                .email("realword@gmail.com")
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .username("RealWorld2")
+                .password("realworld1234!")
+                .build();
+
+        // when
+        user.patch(request);
+
+        // then
+
+        assertEquals("realword@gmail.com", user.getEmail());
+        assertEquals("I like to skateboard", user.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", user.getImage());
+    }
+
+    @Test
+    @DisplayName("유저 정보를 수정할 때 request에 포함된 값만 수정된다.")
+    void putTest2() {
+        // given
+        User user = User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build();
+
+        PutUser request = PutUser
+                .builder()
+                .bio("I like to skateboard")
+                .image("https://i.stack.imgur.com/xHWG8.jpg")
+                .username("RealWorld2")
+                .password("realworld1234!")
+                .build();
+
+        // when
+        user.patch(request);
+
+        // then
+
+        assertEquals("realword@gmail.com", user.getEmail());
+        assertEquals("I like to skateboard", user.getBio());
+        assertEquals("https://i.stack.imgur.com/xHWG8.jpg", user.getImage());
+        assertEquals("RealWorld2", user.getUsername());
+    }
+
+    @Test
+    @DisplayName("비밀번호가 같으면 false 반환한다.")
     void authNotPassTest1() {
         // given
         User user = User.builder()

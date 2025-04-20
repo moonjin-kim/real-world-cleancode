@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.moonjin.realworld.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
