@@ -2,26 +2,30 @@ package com.moonjin.realworld.article.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Slf4j
 @Getter
 @Entity
+@Table(name = "article_tag")
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Table(name = "tag")
-public class Tag {
+public class ArticleTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Article article;
 
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ArticleTag> postTags = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Tag tag;
+
+    @Builder
+    public ArticleTag(Article article, Tag tag) {
+        this.article = article;
+        this.tag = tag;
+    }
 }

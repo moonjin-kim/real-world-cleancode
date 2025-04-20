@@ -19,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Article extends DateEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column()
@@ -33,6 +34,9 @@ public class Article extends DateEntity {
     @ManyToOne
     @JoinColumn
     private User author;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag")
+    private List<Tag> tag;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     private List<Comment> comments;
