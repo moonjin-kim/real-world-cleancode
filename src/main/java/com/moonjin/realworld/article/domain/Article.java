@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 @Getter
 @Entity
@@ -32,6 +34,9 @@ public class Article extends DateEntity {
     @JoinColumn
     private User author;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
+    private List<Comment> comments;
+
     @Builder
     public Article(String body, String title, String description, User author) {
         this.title = title;
@@ -47,5 +52,9 @@ public class Article extends DateEntity {
                 .description(request.getDescription())
                 .body(request.getBody())
                 .build();
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 }
