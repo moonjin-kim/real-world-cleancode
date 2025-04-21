@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -36,9 +37,9 @@ public class Article extends DateEntity {
     private User author;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Tag> tag;
+    private List<ArticleTag> articleTags = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
+    @OneToMany( mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     @Builder
@@ -49,7 +50,7 @@ public class Article extends DateEntity {
         this.body = body;
     }
 
-    public static Article of(ArticleCreate request, User author, List<Tag> tags) {
+    public static Article of(ArticleCreate request, User author) {
         return Article.builder()
                 .author(author)
                 .title(request.getTitle())
@@ -58,12 +59,24 @@ public class Article extends DateEntity {
                 .build();
     }
 
+    public void addTag(Tag tag) {
+        ArticleTag articleTag = new ArticleTag(this, tag);
+        articleTags.add(articleTag);
+        tag.getArticleTags().add(articleTag);
+    }
+
     public void addComment(Comment comment) {
         this.comments.add(comment);
     }
 
     public String getSlug() {
         return this.title.replaceAll(" ", "-").toLowerCase();
+    }
+
+    public List<String> getTagList() {
+        return this.articleTags.stream().map(articleTag -> {
+            return articleTag.getTag().getName();
+        }).toList();
     }
 
     public Long getFavoritesCount() {

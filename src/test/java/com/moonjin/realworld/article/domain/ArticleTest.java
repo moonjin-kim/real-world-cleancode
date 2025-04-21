@@ -27,10 +27,9 @@ class ArticleTest {
                 .build();
 
         Tag tag = Tag.of("Spring");
-        List<Tag> tags = List.of(tag);
 
         // when
-        Article result = Article.of(request, author, tags);
+        Article result = Article.of(request, author);
 
         // then
         Assertions.assertEquals("How to train your dragon", result.getTitle());
@@ -58,8 +57,7 @@ class ArticleTest {
                 .build();
 
         Tag tag = Tag.of("Spring");
-        List<Tag> tags = List.of(tag);
-        Article article = Article.of(request, author, tags);
+        Article article = Article.of(request, author);
 
         // when
         String result = article.getSlug();

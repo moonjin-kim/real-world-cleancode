@@ -24,7 +24,7 @@ public class Tag {
     private String name;
 
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ArticleTag> postTags = new ArrayList<>();
+    private List<ArticleTag> articleTags = new ArrayList<>();
 
     @Builder
     public Tag(String name) {

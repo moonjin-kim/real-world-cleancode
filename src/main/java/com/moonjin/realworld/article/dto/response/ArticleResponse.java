@@ -22,20 +22,19 @@ public class ArticleResponse {
     String title;
     String description;
     String body;
-    List<Tag> tagList;
+    List<String> tagList;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     boolean favorited;
     Long favoritesCount;
     Author author;
 
-    @Builder
     public ArticleResponse(Article article) {
         this.slug = article.getSlug();
         this.title = article.getTitle();
         this.description = article.getDescription();
         this.body = article.getBody();
-        this.tagList = article.getTag();
+        this.tagList = article.getTagList();
         this.createdAt = article.getCreatedAt();
         this.updatedAt = article.getUpdatedAt();
         this.favoritesCount = article.getFavoritesCount();
