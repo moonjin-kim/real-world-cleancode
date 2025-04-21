@@ -17,10 +17,10 @@ public class ArticleTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     private Article article;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     private Tag tag;
 
     @Builder

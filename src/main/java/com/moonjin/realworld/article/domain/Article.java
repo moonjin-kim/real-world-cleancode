@@ -36,11 +36,11 @@ public class Article extends DateEntity {
     @JoinColumn
     private User author;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleTag> articleTags = new ArrayList<>();
 
-    @OneToMany( mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+//    @OneToMany( mappedBy = "articles", cascade = CascadeType.ALL)
+//    private List<Comment> comments;
 
     @Builder
     public Article(String body, String title, String description, User author) {
@@ -59,15 +59,17 @@ public class Article extends DateEntity {
                 .build();
     }
 
-    public void addTag(Tag tag) {
-        ArticleTag articleTag = new ArticleTag(this, tag);
-        articleTags.add(articleTag);
-        tag.getArticleTags().add(articleTag);
+    public void addTags(List<Tag> tags) {
+        tags.forEach(tag -> {
+            ArticleTag articleTag = new ArticleTag(this, tag);
+            articleTags.add(articleTag);
+            tag.getArticleTags().add(articleTag);
+        });
     }
 
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
-    }
+//    public void addComment(Comment comment) {
+//        this.comments.add(comment);
+//    }
 
     public String getSlug() {
         return this.title.replaceAll(" ", "-").toLowerCase();
