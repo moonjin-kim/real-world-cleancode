@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Table(name = "comment")
+@Table(name = "comments")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

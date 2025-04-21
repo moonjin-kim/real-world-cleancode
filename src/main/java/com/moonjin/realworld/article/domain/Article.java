@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Getter
 @Entity
-@Table(name = "article")
+@Table(name = "articles")
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Article extends DateEntity {
     @Id
@@ -35,7 +35,7 @@ public class Article extends DateEntity {
     @JoinColumn
     private User author;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tag> tag;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
@@ -49,7 +49,7 @@ public class Article extends DateEntity {
         this.body = body;
     }
 
-    public static Article of(ArticleCreate request, User author) {
+    public static Article of(ArticleCreate request, User author, List<Tag> tags) {
         return Article.builder()
                 .author(author)
                 .title(request.getTitle())
@@ -60,5 +60,13 @@ public class Article extends DateEntity {
 
     public void addComment(Comment comment) {
         this.comments.add(comment);
+    }
+
+    public String getSlug() {
+        return this.title.replaceAll(" ", "-").toLowerCase();
+    }
+
+    public Long getFavoritesCount() {
+        return 0L;
     }
 }
