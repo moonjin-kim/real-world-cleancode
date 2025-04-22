@@ -1,6 +1,7 @@
 package com.moonjin.realworld.article.controller;
 
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
+import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
 import com.moonjin.realworld.article.service.ArticleService;
 import com.moonjin.realworld.user.controller.UserController;
@@ -29,5 +30,16 @@ public class ArticleController {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
         return articleService.getBySlug(slug, userId);
+    }
+
+    @PutMapping("/articles/{slug}")
+    public ArticleResponse getBySlug(
+            HttpSession httpSession,
+            @PathVariable String slug,
+            @RequestBody @Valid ArticleEdit request
+    ) {
+        Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
+
+        return articleService.edit(slug, request, userId);
     }
 }

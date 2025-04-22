@@ -3,11 +3,13 @@ package com.moonjin.realworld.article.service;
 import com.moonjin.realworld.article.domain.Article;
 import com.moonjin.realworld.article.domain.Tag;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
+import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
 import com.moonjin.realworld.article.port.UserPort;
 import com.moonjin.realworld.article.repository.ArticleRepository;
 import com.moonjin.realworld.article.repository.TagRepository;
 import com.moonjin.realworld.common.exception.NotFoundArticleException;
+import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.user.dto.response.Profile;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,21 @@ public class ArticleService {
                 .orElseThrow(NotFoundArticleException::new);
 
         Profile profile = userPort.getProfileFrom(article.getAuthorId(), sessionId);
+
+        return new ArticleResponse(article, profile);
+    }
+
+    @Transactional
+    public ArticleResponse edit(String slug, ArticleEdit request, Long authorId) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(NotFoundArticleException::new);
+        if(article.isNotAuth(authorId)) {
+            throw new Unauthorized();
+        }
+
+        Profile profile = userPort.getProfileFrom(authorId, authorId);
+
+        article.edit(request);
 
         return new ArticleResponse(article, profile);
     }

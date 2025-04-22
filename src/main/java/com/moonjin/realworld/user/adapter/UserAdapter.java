@@ -1,6 +1,7 @@
 package com.moonjin.realworld.user.adapter;
 
 import com.moonjin.realworld.article.port.UserPort;
+import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.common.exception.UserNotFoundException;
 import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.response.Profile;
@@ -17,7 +18,7 @@ public class UserAdapter implements UserPort {
     @Override
     public Profile getProfileFrom(Long userId, Long currentUserId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(Unauthorized::new);
 
         boolean isFollowed = false;
         if(currentUserId != null) {

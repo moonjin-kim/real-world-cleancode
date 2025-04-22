@@ -3,9 +3,12 @@ package com.moonjin.realworld.article.service;
 import com.moonjin.realworld.article.domain.Article;
 import com.moonjin.realworld.article.domain.Tag;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
+import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
 import com.moonjin.realworld.article.repository.ArticleRepository;
 import com.moonjin.realworld.article.repository.TagRepository;
+import com.moonjin.realworld.common.exception.Unauthorized;
+import com.moonjin.realworld.common.exception.UserNotFoundException;
 import com.moonjin.realworld.user.domain.User;
 import com.moonjin.realworld.user.dto.request.Signup;
 import com.moonjin.realworld.user.repository.UserRepository;
@@ -99,5 +102,78 @@ class ArticleServiceTest {
         Assertions.assertEquals("How to train your dragon", response.getTitle());
         Assertions.assertEquals("It takes a Jacobian", response.getBody());
         Assertions.assertEquals("Ever wonder how?", response.getDescription());
+    }
+
+    @Test
+    @DisplayName("article을 수정한다.")
+    void editTest() {
+        // given
+        User user = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .authorId(user.getId())
+                .build()
+        );
+
+        ArticleEdit articleEdit = ArticleEdit.builder()
+                .title("How to train your dragonBall")
+                .body("It takes a ball")
+                .description("why wonder how?")
+                .build();
+
+
+        // when
+        ArticleResponse response = articleService.edit(article.getSlug(), articleEdit, user.getId());
+
+
+        // then
+        Assertions.assertEquals("how-to-train-your-dragonball", response.getSlug());
+        Assertions.assertEquals("How to train your dragonBall", response.getTitle());
+        Assertions.assertEquals("It takes a ball", response.getBody());
+        Assertions.assertEquals("why wonder how?", response.getDescription());
+
+        Article editedArticle = articleRepository.findById(article.getId()).get();
+        Assertions.assertEquals("how-to-train-your-dragonball", editedArticle.getSlug());
+        Assertions.assertEquals("How to train your dragonBall", editedArticle.getTitle());
+        Assertions.assertEquals("It takes a ball", editedArticle.getBody());
+        Assertions.assertEquals("why wonder how?", editedArticle.getDescription());
+    }
+
+    @Test
+    @DisplayName("작성자가 아니면 article을 수정할 수 없다")
+    void editTest2() {
+        // given
+        User user = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .authorId(user.getId())
+                .build()
+        );
+
+        ArticleEdit articleEdit = ArticleEdit.builder()
+                .title("How to train your dragonBall")
+                .body("It takes a ball")
+                .description("why wonder how?")
+                .build();
+
+
+        // when
+        // then
+        assertThrows(Unauthorized.class, () -> articleService.edit(
+                article.getSlug(),articleEdit, user.getId() + 1));
     }
 }

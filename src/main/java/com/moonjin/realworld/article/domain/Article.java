@@ -1,6 +1,7 @@
 package com.moonjin.realworld.article.domain;
 
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
+import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.common.domain.DateEntity;
 import com.moonjin.realworld.user.domain.User;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Getter
@@ -70,12 +72,27 @@ public class Article extends DateEntity {
         });
     }
 
+    public void edit(ArticleEdit request) {
+        Optional.ofNullable(request.getTitle())
+                .ifPresent(this::putTitle);
+
+        Optional.ofNullable(request.getDescription())
+                .ifPresent(this::putDescribe);
+
+        Optional.ofNullable(request.getBody())
+                .ifPresent(this::putBody);
+    }
+
 //    public void addComment(Comment comment) {
 //        this.comments.add(comment);
 //    }
 
     public String makeSlug(String title) {
         return title.replaceAll(" ", "-").toLowerCase();
+    }
+
+    public boolean isNotAuth(Long authorId) {
+        return !authorId.equals(authorId);
     }
 
     public List<String> getTagList() {
@@ -86,5 +103,18 @@ public class Article extends DateEntity {
 
     public Long getFavoritesCount() {
         return 0L;
+    }
+
+    private void putTitle(String title) {
+        this.title = title;
+        this.slug = makeSlug(title);
+    }
+
+    private void putDescribe(String description) {
+        this.description = description;
+    }
+
+    private void putBody(String body) {
+        this.body = body;
     }
 }
