@@ -29,14 +29,14 @@ class ArticleTest {
         Tag tag = Tag.of("Spring");
 
         // when
-        Article result = Article.of(request, author);
+        Article result = Article.of(request, 1L);
 
         // then
         Assertions.assertEquals("How to train your dragon", result.getTitle());
         Assertions.assertEquals("It takes a Jacobian", result.getBody());
         Assertions.assertEquals("Ever wonder how?", result.getDescription());
 
-        Assertions.assertEquals(author, result.getAuthor());
+        Assertions.assertEquals(1L, result.getAuthorId());
     }
 
 
@@ -57,7 +57,7 @@ class ArticleTest {
                 .build();
 
         Tag tag = Tag.of("Spring");
-        Article article = Article.of(request, author);
+        Article article = Article.of(request, 1L);
 
         // when
         String result = article.getSlug();

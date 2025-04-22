@@ -4,11 +4,11 @@ import com.moonjin.realworld.article.domain.Article;
 import com.moonjin.realworld.article.domain.Tag;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
+import com.moonjin.realworld.article.port.UserPort;
 import com.moonjin.realworld.article.repository.ArticleRepository;
 import com.moonjin.realworld.article.repository.TagRepository;
-import com.moonjin.realworld.common.exception.Unauthorized;
-import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.repository.UserRepository;
+import com.moonjin.realworld.common.exception.NotFoundArticleException;
+import com.moonjin.realworld.user.dto.response.Profile;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,20 +20,30 @@ import java.util.List;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final TagRepository tagRepository;
-    private final UserRepository userRepository;
+    private final UserPort userPort;
 
     @Transactional
-    ArticleResponse create(ArticleCreate request, Long authorId) {
-        User author = userRepository.findById(authorId).orElseThrow(Unauthorized::new);
+    public ArticleResponse create(ArticleCreate request, Long authorId) {
+        Profile profile = userPort.getProfileFrom(authorId, authorId);
 
         List<Tag> tags = resolveTags(request.getTagList());
 
-        Article article = Article.of(request, author);
+        Article article = Article.of(request, authorId);
         article.addTags(tags);
 
         articleRepository.save(article);
 
-        return new ArticleResponse(article);
+        return new ArticleResponse(article, profile);
+    }
+
+    @Transactional
+    public ArticleResponse getBySlug(String slug, Long sessionId) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(NotFoundArticleException::new);
+
+        Profile profile = userPort.getProfileFrom(article.getAuthorId(), sessionId);
+
+        return new ArticleResponse(article, profile);
     }
 
     public List<Tag> resolveTags(List<String> tagNames) {

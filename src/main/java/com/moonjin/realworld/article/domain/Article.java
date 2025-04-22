@@ -24,6 +24,12 @@ public class Article extends DateEntity {
     private Long id;
 
     @Column()
+    private Long authorId;
+
+    @Column()
+    private String slug;
+
+    @Column()
     private String title;
 
     @Column(length = 50, nullable = false)
@@ -32,10 +38,6 @@ public class Article extends DateEntity {
     @Column()
     private String body;
 
-    @ManyToOne
-    @JoinColumn
-    private User author;
-
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleTag> articleTags = new ArrayList<>();
 
@@ -43,16 +45,17 @@ public class Article extends DateEntity {
 //    private List<Comment> comments;
 
     @Builder
-    public Article(String body, String title, String description, User author) {
+    public Article(String body, String title, String description, Long authorId) {
         this.title = title;
+        this.slug = makeSlug(title);
         this.description = description;
-        this.author = author;
+        this.authorId = authorId;
         this.body = body;
     }
 
-    public static Article of(ArticleCreate request, User author) {
+    public static Article of(ArticleCreate request, Long authorId) {
         return Article.builder()
-                .author(author)
+                .authorId(authorId)
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .body(request.getBody())
@@ -71,8 +74,8 @@ public class Article extends DateEntity {
 //        this.comments.add(comment);
 //    }
 
-    public String getSlug() {
-        return this.title.replaceAll(" ", "-").toLowerCase();
+    public String makeSlug(String title) {
+        return title.replaceAll(" ", "-").toLowerCase();
     }
 
     public List<String> getTagList() {

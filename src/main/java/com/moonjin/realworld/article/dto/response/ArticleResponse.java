@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.moonjin.realworld.article.domain.Article;
 import com.moonjin.realworld.article.domain.Tag;
 import com.moonjin.realworld.user.domain.User;
+import com.moonjin.realworld.user.dto.response.Profile;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -27,9 +28,9 @@ public class ArticleResponse {
     LocalDateTime updatedAt;
     boolean favorited;
     Long favoritesCount;
-    Author author;
+    Profile author;
 
-    public ArticleResponse(Article article) {
+    public ArticleResponse(Article article, Profile profile) {
         this.slug = article.getSlug();
         this.title = article.getTitle();
         this.description = article.getDescription();
@@ -38,6 +39,6 @@ public class ArticleResponse {
         this.createdAt = article.getCreatedAt();
         this.updatedAt = article.getUpdatedAt();
         this.favoritesCount = article.getFavoritesCount();
-        this.author = new Author(article.getAuthor(), false);
+        this.author = profile;
     }
 }

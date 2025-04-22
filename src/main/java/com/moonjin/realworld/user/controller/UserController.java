@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api")
 public class UserController {
     private final UserService userService;
-    private static final String SESSION_USER_KEY = "user";
+    public static final String SESSION_USER_KEY = "user";
 
     @PostMapping("/users")
     public UserDetail signUp(HttpSession httpSession, @RequestBody @Valid Signup request) {

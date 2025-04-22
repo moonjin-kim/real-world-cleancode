@@ -1,5 +1,6 @@
 package com.moonjin.realworld.article.service;
 
+import com.moonjin.realworld.article.domain.Article;
 import com.moonjin.realworld.article.domain.Tag;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
@@ -68,5 +69,35 @@ class ArticleServiceTest {
 
         List<Tag> tag = tagRepository.findAll();
         assertEquals(2, tag.size());
+    }
+
+    @Test
+    @DisplayName("slug로 article를 조회한다")
+    void getBySlugTest() {
+        // given
+        User user = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .authorId(user.getId())
+                .build()
+        );
+
+
+        // when
+        ArticleResponse response = articleService.getBySlug(article.getSlug(), user.getId());
+
+
+        // then
+        Assertions.assertEquals("how-to-train-your-dragon", response.getSlug());
+        Assertions.assertEquals("How to train your dragon", response.getTitle());
+        Assertions.assertEquals("It takes a Jacobian", response.getBody());
+        Assertions.assertEquals("Ever wonder how?", response.getDescription());
     }
 }
