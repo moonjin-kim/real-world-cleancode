@@ -63,6 +63,20 @@ public class ArticleService {
         return new ArticleResponse(article, profile);
     }
 
+    @Transactional
+    public String delete(String slug, Long authorId) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(NotFoundArticleException::new);
+        if(article.isNotAuth(authorId)) {
+            throw new Unauthorized();
+        }
+
+        articleRepository.delete(article);
+
+
+        return "Delete " + slug + "Article";
+    }
+
     public List<Tag> resolveTags(List<String> tagNames) {
         return tagNames.stream()
                 .map(name -> tagRepository.findByName(name)

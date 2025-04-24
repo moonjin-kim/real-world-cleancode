@@ -176,4 +176,55 @@ class ArticleServiceTest {
         assertThrows(Unauthorized.class, () -> articleService.edit(
                 article.getSlug(),articleEdit, user.getId() + 1));
     }
+
+    @Test
+    @DisplayName("작성자는 article을 삭제한다.")
+    void deleteTest() {
+        // given
+        User user = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .authorId(user.getId())
+                .build()
+        );
+
+
+        // when
+        articleService.delete(article.getSlug(), user.getId());
+        // then
+        List<Article> articles = articleRepository.findAll();
+        assertEquals(0, articles.size());
+    }
+
+    @Test
+    @DisplayName("작성자가 아니면 article을 삭제할 수 없다")
+    void deleteTest2() {
+        // given
+        User user = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .authorId(user.getId())
+                .build()
+        );
+
+
+        // when
+        // then
+        assertThrows(Unauthorized.class, () -> articleService.delete(
+                article.getSlug(), user.getId() + 1));
+    }
 }

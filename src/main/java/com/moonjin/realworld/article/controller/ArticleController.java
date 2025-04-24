@@ -42,4 +42,14 @@ public class ArticleController {
 
         return articleService.edit(slug, request, userId);
     }
+
+    @DeleteMapping("/articles/{slug}")
+    public String delete(
+            HttpSession httpSession,
+            @PathVariable String slug
+    ) {
+        Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
+
+        return articleService.delete(slug, userId);
+    }
 }
