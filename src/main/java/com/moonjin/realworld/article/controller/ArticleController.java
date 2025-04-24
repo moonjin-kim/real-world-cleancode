@@ -3,6 +3,7 @@ package com.moonjin.realworld.article.controller;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
 import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
+import com.moonjin.realworld.article.dto.response.Tags;
 import com.moonjin.realworld.article.service.ArticleService;
 import com.moonjin.realworld.user.controller.UserController;
 import jakarta.servlet.http.HttpSession;
@@ -10,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -51,5 +54,10 @@ public class ArticleController {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
         return articleService.delete(slug, userId);
+    }
+
+    @GetMapping("/tags")
+    public Tags getTags() {
+        return articleService.getTags();
     }
 }

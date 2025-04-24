@@ -5,6 +5,7 @@ import com.moonjin.realworld.article.domain.Tag;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
 import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
+import com.moonjin.realworld.article.dto.response.Tags;
 import com.moonjin.realworld.article.port.UserPort;
 import com.moonjin.realworld.article.repository.ArticleRepository;
 import com.moonjin.realworld.article.repository.TagRepository;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +79,11 @@ public class ArticleService {
         return "Delete " + slug + "Article";
     }
 
-    public List<Tag> resolveTags(List<String> tagNames) {
+    public Tags getTags() {
+        return new Tags(tagRepository.findAll().stream().map(Tag::getName).collect(Collectors.toList()));
+    }
+
+    private List<Tag> resolveTags(List<String> tagNames) {
         return tagNames.stream()
                 .map(name -> tagRepository.findByName(name)
                         .orElseGet(() -> tagRepository.save(new Tag(name))))
