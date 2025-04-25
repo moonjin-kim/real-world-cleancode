@@ -3,7 +3,6 @@ package com.moonjin.realworld.article.domain;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
 import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.common.domain.DateEntity;
-import com.moonjin.realworld.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,6 +41,12 @@ public class Article extends DateEntity {
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleTag> articleTags = new ArrayList<>();
+
+    @Column(nullable = false)
+    private Long likeCount = 0L;
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleFavorite> articleFavorites = new ArrayList<>();
 
 //    @OneToMany( mappedBy = "articles", cascade = CascadeType.ALL)
 //    private List<Comment> comments;
@@ -83,6 +88,20 @@ public class Article extends DateEntity {
                 .ifPresent(this::putBody);
     }
 
+    // 좋아요 누르기
+    public void favoriteBy(Long userId) {
+        boolean already = articleFavorites.stream()
+                .anyMatch(l -> l.getUserId().equals(userId));
+        if (already) {
+            throw new IllegalStateException("이미 좋아요를 눌렀습니다.");
+        }
+        articleFavorites.add(new ArticleFavorite(userId, this));
+    }
+
+    public void unFavoriteBy(Long userId) {
+        articleFavorites.removeIf(l -> l.getUserId().equals(userId));
+    }
+
 //    public void addComment(Comment comment) {
 //        this.comments.add(comment);
 //    }
@@ -102,7 +121,7 @@ public class Article extends DateEntity {
     }
 
     public Long getFavoritesCount() {
-        return 0L;
+        return articleFavorites.stream().count();
     }
 
     private void putTitle(String title) {

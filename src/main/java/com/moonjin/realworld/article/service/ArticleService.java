@@ -7,6 +7,7 @@ import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
 import com.moonjin.realworld.article.dto.response.Tags;
 import com.moonjin.realworld.article.port.UserPort;
+import com.moonjin.realworld.article.repository.ArticleFavoriteRepository;
 import com.moonjin.realworld.article.repository.ArticleRepository;
 import com.moonjin.realworld.article.repository.TagRepository;
 import com.moonjin.realworld.common.exception.NotFoundArticleException;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final TagRepository tagRepository;
+    private final ArticleFavoriteRepository articleFavoriteRepository;
     private final UserPort userPort;
 
     @Transactional
@@ -37,7 +39,7 @@ public class ArticleService {
 
         articleRepository.save(article);
 
-        return new ArticleResponse(article, profile);
+        return new ArticleResponse(article, profile, false);
     }
 
     @Transactional
@@ -46,8 +48,12 @@ public class ArticleService {
                 .orElseThrow(NotFoundArticleException::new);
 
         Profile profile = userPort.getProfileFrom(article.getAuthorId(), sessionId);
+        boolean exists = false;
+        if(sessionId != null) {
+            exists = articleFavoriteRepository.existsByArticleAndUserId(article, sessionId);
+        }
 
-        return new ArticleResponse(article, profile);
+        return new ArticleResponse(article, profile, exists);
     }
 
     @Transactional
@@ -62,7 +68,7 @@ public class ArticleService {
 
         article.edit(request);
 
-        return new ArticleResponse(article, profile);
+        return new ArticleResponse(article, profile, false);
     }
 
     @Transactional
@@ -77,6 +83,33 @@ public class ArticleService {
 
 
         return "Delete " + slug + "Article";
+    }
+
+    @Transactional
+    public ArticleResponse favorite(String slug, Long userId) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(NotFoundArticleException::new);
+
+        Profile profile = userPort.getProfileFrom(article.getAuthorId(), article.getAuthorId());
+        article.favoriteBy(userId);
+        articleRepository.save(article);
+
+        return new ArticleResponse(article, profile, true);
+    }
+
+    @Transactional
+    public ArticleResponse unFavorite(String slug, Long userId) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(NotFoundArticleException::new);
+
+        articleFavoriteRepository.findByArticleAndUserId(article, userId)
+                .ifPresent(articleFavoriteRepository::delete);
+        article.unFavoriteBy(userId);
+        articleRepository.save(article);
+
+        Profile profile = userPort.getProfileFrom(article.getAuthorId(), article.getAuthorId());
+
+        return new ArticleResponse(article, profile, false);
     }
 
     public Tags getTags() {

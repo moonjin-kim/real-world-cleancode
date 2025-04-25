@@ -30,7 +30,7 @@ public class ArticleResponse {
     Long favoritesCount;
     Profile author;
 
-    public ArticleResponse(Article article, Profile profile) {
+    public ArticleResponse(Article article, Profile profile, boolean isFavorited) {
         this.slug = article.getSlug();
         this.title = article.getTitle();
         this.description = article.getDescription();
@@ -38,6 +38,7 @@ public class ArticleResponse {
         this.tagList = article.getTagList();
         this.createdAt = article.getCreatedAt();
         this.updatedAt = article.getUpdatedAt();
+        this.favorited = isFavorited;
         this.favoritesCount = article.getFavoritesCount();
         this.author = profile;
     }

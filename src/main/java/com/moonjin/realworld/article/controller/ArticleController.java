@@ -56,6 +56,26 @@ public class ArticleController {
         return articleService.delete(slug, userId);
     }
 
+    @PostMapping("/articles/{slug}/favorite")
+    public ArticleResponse favorite(
+            HttpSession httpSession,
+            @PathVariable String slug
+    ) {
+        Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
+
+        return articleService.favorite(slug, userId);
+    }
+
+    @DeleteMapping("/articles/{slug}/favorite")
+    public ArticleResponse unFavorite(
+            HttpSession httpSession,
+            @PathVariable String slug
+    ) {
+        Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
+
+        return articleService.unFavorite(slug, userId);
+    }
+
     @GetMapping("/tags")
     public Tags getTags() {
         return articleService.getTags();
