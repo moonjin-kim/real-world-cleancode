@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -111,7 +112,7 @@ public class Article extends DateEntity {
     }
 
     public boolean isNotAuth(Long authorId) {
-        return !authorId.equals(authorId);
+        return !Objects.equals(this.authorId, authorId);
     }
 
     public List<String> getTagList() {
@@ -121,7 +122,7 @@ public class Article extends DateEntity {
     }
 
     public Long getFavoritesCount() {
-        return articleFavorites.stream().count();
+        return (long) articleFavorites.size();
     }
 
     private void putTitle(String title) {

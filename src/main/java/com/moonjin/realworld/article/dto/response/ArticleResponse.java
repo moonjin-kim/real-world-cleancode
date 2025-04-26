@@ -15,8 +15,6 @@ import java.util.List;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 
-@JsonTypeName("profile")
-@JsonTypeInfo(include = WRAPPER_OBJECT, use = NAME)
 @Getter
 public class ArticleResponse {
     String slug;

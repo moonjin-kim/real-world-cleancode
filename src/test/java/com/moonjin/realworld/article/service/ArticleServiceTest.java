@@ -1,10 +1,13 @@
 package com.moonjin.realworld.article.service;
 
 import com.moonjin.realworld.article.domain.Article;
+import com.moonjin.realworld.article.domain.ArticleFavorite;
 import com.moonjin.realworld.article.domain.Tag;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
 import com.moonjin.realworld.article.dto.request.ArticleEdit;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
+import com.moonjin.realworld.article.dto.response.Tags;
+import com.moonjin.realworld.article.repository.ArticleFavoriteRepository;
 import com.moonjin.realworld.article.repository.ArticleRepository;
 import com.moonjin.realworld.article.repository.TagRepository;
 import com.moonjin.realworld.common.exception.Unauthorized;
@@ -33,10 +36,13 @@ class ArticleServiceTest {
     @Autowired
     private TagRepository tagRepository;
     @Autowired
+    private ArticleFavoriteRepository articleFavoriteRepository;
+    @Autowired
     private ArticleService articleService;
 
     @AfterEach
     void clean() {
+        articleFavoriteRepository.deleteAll();
         articleRepository.deleteAll();
         tagRepository.deleteAll();
         userRepository.deleteAll();
@@ -225,6 +231,156 @@ class ArticleServiceTest {
         // when
         // then
         assertThrows(Unauthorized.class, () -> articleService.delete(
-                article.getSlug(), user.getId() + 1));
+                article.getSlug(), user.getId() + 2));
+    }
+
+    @Test
+    @DisplayName("유저가 article을 좋아요한다.")
+    void favoriteTest1() {
+        // given
+        User user1 = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        User user2 = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .authorId(user1.getId())
+                .build()
+        );
+
+
+        // when
+        ArticleResponse result = this.articleService.favorite(article.getSlug(), user2.getId());
+
+        // then
+        assertEquals(true, result.isFavorited());
+
+        List<ArticleFavorite> articleFavorites = articleFavoriteRepository.findAll();
+        assertEquals(1, articleFavorites.size());
+        assertEquals(user2.getId(), articleFavorites.get(0).getUserId());
+    }
+
+    @Test
+    @DisplayName("이미 해당 article에 좋아요 한 유저는 좋아요 할 수 없다.")
+    void favoriteTest2() {
+        // given
+        User user1 = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        User user2 = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .authorId(user1.getId())
+                .build()
+        );
+        this.articleService.favorite(article.getSlug(), user2.getId());
+
+
+        // when
+
+        // then
+        assertThrows(IllegalStateException.class, () -> this.articleService.favorite(article.getSlug(), user2.getId()));
+    }
+
+    @Test
+    @DisplayName("유저가 article을 좋아요한 것을 취소한다.")
+    void unFavoriteTest1() {
+        // given
+        User user1 = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        User user2 = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .authorId(user1.getId())
+                .build()
+        );
+        this.articleService.favorite(article.getSlug(), user2.getId());
+
+
+        // when
+        ArticleResponse result = this.articleService.unFavorite(article.getSlug(), user2.getId());
+
+        // then
+        assertEquals(false, result.isFavorited());
+
+        List<ArticleFavorite> articleFavorites = articleFavoriteRepository.findAll();
+        assertEquals(0, articleFavorites.size());
+    }
+
+//    @Test
+//    @DisplayName("이미 해당 article에 좋아요한 적 없으면 취소할 수 없다.")
+//    void unFavoriteTest2() {
+//        // given
+//        User user1 = userRepository.save(User.builder()
+//                .email("realword@gmail.com")
+//                .password("realworld123!")
+//                .username("RealWorld")
+//                .build());
+//
+//        User user2 = userRepository.save(User.builder()
+//                .email("realword@gmail.com")
+//                .password("realworld123!")
+//                .username("RealWorld")
+//                .build());
+//
+//        Article article = articleRepository.save(Article.builder()
+//                .title("How to train your dragon")
+//                .body("It takes a Jacobian")
+//                .description("Ever wonder how?")
+//                .authorId(user1.getId())
+//                .build()
+//        );
+//
+//
+//        // when
+//        // then
+//        assertThrows(IllegalStateException.class, () -> this.articleService.unFavorite(article.getSlug(), user2.getId()));
+//    }
+
+    @Test
+    @DisplayName("유저가 article을 좋아요한 것을 취소한다.")
+    void getTagTest1() {
+        // given
+        Tag tag1 = tagRepository.save(new Tag("java"));
+        Tag tag2 = tagRepository.save(new Tag("C++"));
+        Tag tag3 = tagRepository.save(new Tag("typescript"));
+
+
+        // when
+        Tags result = this.articleService.getTags();
+
+        // then
+        assertEquals(3, result.getTags().size());
     }
 }

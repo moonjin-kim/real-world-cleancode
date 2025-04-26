@@ -6,11 +6,6 @@ import com.moonjin.realworld.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 
-import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT;
-import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
-
-@JsonTypeName("profile")
-@JsonTypeInfo(include = WRAPPER_OBJECT, use = NAME)
 @Builder
 @Getter
 public class Profile {
