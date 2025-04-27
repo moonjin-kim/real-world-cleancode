@@ -4,6 +4,8 @@ import com.moonjin.realworld.article.domain.Article;
 import com.moonjin.realworld.article.domain.Tag;
 import com.moonjin.realworld.article.dto.request.ArticleCreate;
 import com.moonjin.realworld.article.dto.request.ArticleEdit;
+import com.moonjin.realworld.article.dto.request.ArticleParam;
+import com.moonjin.realworld.article.dto.response.ArticleListResponse;
 import com.moonjin.realworld.article.dto.response.ArticleResponse;
 import com.moonjin.realworld.article.dto.response.Tags;
 import com.moonjin.realworld.article.port.UserPort;
@@ -110,6 +112,11 @@ public class ArticleService {
         Profile profile = userPort.getProfileFrom(article.getAuthorId(), article.getAuthorId());
 
         return new ArticleResponse(article, profile, false);
+    }
+
+    @Transactional()
+    public ArticleListResponse getList(ArticleParam param) {
+        return articleRepository.getList(param);
     }
 
     public Tags getTags() {

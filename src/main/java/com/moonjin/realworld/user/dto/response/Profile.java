@@ -14,6 +14,13 @@ public class Profile {
     String image;
     Boolean following;
 
+    public Profile(String username, String bio, String image, Boolean following) {
+        this.username = username;
+        this.bio = bio;
+        this.image = image;
+        this.following = following;
+    }
+
     public static Profile of(User user, boolean following) {
         return Profile.builder()
                 .username(user.getUsername())
