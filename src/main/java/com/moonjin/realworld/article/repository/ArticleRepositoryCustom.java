@@ -5,5 +5,5 @@ import com.moonjin.realworld.article.dto.response.ArticleListResponse;
 
 
 public interface ArticleRepositoryCustom {
-    ArticleListResponse getList(ArticleParam param);
+    ArticleListResponse getList(ArticleParam param, Long userId);
 }

@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import static com.moonjin.realworld.article.domain.QArticle.article;
+import static com.moonjin.realworld.article.domain.QArticleFavorite.articleFavorite;
 import static com.moonjin.realworld.article.domain.QArticleTag.articleTag;
 import static com.moonjin.realworld.article.domain.QTag.tag;
 import static com.moonjin.realworld.user.domain.QUser.user;
@@ -32,7 +33,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
 
     @Override
-    public ArticleListResponse getList(ArticleParam param) {
+    public ArticleListResponse getList(ArticleParam param, Long userId) {
         long total = queryFactory
                 .select(article.count())
                 .from(article)
@@ -44,9 +45,10 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .leftJoin(user).on(article.authorId.eq(user.id))
                 .leftJoin(article.articleTags, articleTag)
                 .leftJoin(tag).on(articleTag.tag.eq(tag))
+                .leftJoin(article.articleFavorites, articleFavorite)
                 .where(eqAuthor(param.getAuthor()), eqTag(param.getTag()), eqFavorited(param.getFavorited()))
                 .limit(param.getLimit())
-                .offset((long)(param.getOffset() * 10))
+                .offset(param.getOffset() * 10)
                 .transform(
                         groupBy(article.id).list(
                                 Projections.constructor(ArticleResponse.class,
@@ -57,8 +59,11 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                         list(tag.name),                   // <— tagList
                                         article._super.createdAt,
                                         article._super.updatedAt,
-                                        Expressions.constant(false),      // favorited
-                                        Expressions.constant(1L),  // favoritesCount
+                                        Expressions.cases()
+                                                .when(userId != null ? articleFavorite.userId.eq(userId) : Expressions.FALSE)
+                                                .then(true)
+                                                .otherwise(false),      // favorited
+                                        article.articleFavorites.size().longValue(),  // favoritesCount
                                         Projections.constructor(Profile.class,
                                                 user.username,
                                                 user.bio,

@@ -115,8 +115,8 @@ public class ArticleService {
     }
 
     @Transactional()
-    public ArticleListResponse getList(ArticleParam param) {
-        return articleRepository.getList(param);
+    public ArticleListResponse getList(ArticleParam param, Long userId) {
+        return articleRepository.getList(param, userId);
     }
 
     public Tags getTags() {

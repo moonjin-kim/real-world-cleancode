@@ -85,7 +85,7 @@ public class ArticleController {
     ) {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
-        return articleService.getList(articleParam);
+        return articleService.getList(articleParam, userId);
     }
 
     @GetMapping("/tags")
