@@ -1,7 +1,6 @@
 package com.moonjin.realworld.article.domain;
 
-import com.moonjin.realworld.article.dto.request.ArticleCreate;
-import com.moonjin.realworld.user.domain.User;
+import com.moonjin.realworld.domain.article.Tag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,8 @@
 package com.moonjin.realworld.user.domain;
 
-import com.moonjin.realworld.user.dto.request.PutUser;
-import com.moonjin.realworld.user.dto.request.Signup;
+import com.moonjin.realworld.domain.user.User;
+import com.moonjin.realworld.dto.request.PutUser;
+import com.moonjin.realworld.dto.request.Signup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

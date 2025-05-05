@@ -1,7 +1,7 @@
 package com.moonjin.realworld.common.config;
 
 import com.moonjin.realworld.common.annotation.SessionUser;
-import com.moonjin.realworld.user.domain.User;
+import com.moonjin.realworld.domain.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.core.MethodParameter;

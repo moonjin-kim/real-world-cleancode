@@ -1,15 +1,14 @@
 package com.moonjin.realworld.article.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moonjin.realworld.article.domain.Article;
-import com.moonjin.realworld.article.dto.request.ArticleCreate;
-import com.moonjin.realworld.article.dto.request.ArticleEdit;
-import com.moonjin.realworld.article.repository.ArticleFavoriteRepository;
-import com.moonjin.realworld.article.repository.ArticleRepository;
-import com.moonjin.realworld.article.repository.TagRepository;
-import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.dto.request.Signup;
-import com.moonjin.realworld.user.repository.UserRepository;
+import com.moonjin.realworld.domain.article.Article;
+import com.moonjin.realworld.dto.request.ArticleCreate;
+import com.moonjin.realworld.dto.request.ArticleEdit;
+import com.moonjin.realworld.repository.ArticleFavoriteRepository;
+import com.moonjin.realworld.repository.ArticleRepository;
+import com.moonjin.realworld.repository.TagRepository;
+import com.moonjin.realworld.domain.user.User;
+import com.moonjin.realworld.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.moonjin.realworld.user.controller.UserController.SESSION_USER_KEY;
+import static com.moonjin.realworld.controller.UserController.SESSION_USER_KEY;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

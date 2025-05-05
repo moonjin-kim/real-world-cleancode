@@ -1,13 +1,13 @@
 package com.moonjin.realworld.article.domain;
 
-import com.moonjin.realworld.article.dto.request.ArticleCreate;
-import com.moonjin.realworld.article.dto.request.ArticleEdit;
-import com.moonjin.realworld.user.domain.User;
+import com.moonjin.realworld.domain.article.Article;
+import com.moonjin.realworld.domain.article.Tag;
+import com.moonjin.realworld.dto.request.ArticleCreate;
+import com.moonjin.realworld.dto.request.ArticleEdit;
+import com.moonjin.realworld.domain.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 class ArticleTest {
 
