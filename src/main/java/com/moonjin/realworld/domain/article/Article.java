@@ -92,17 +92,17 @@ public class Article extends DateEntity {
     }
 
     // 좋아요 누르기
-    public void favoriteBy(Long userId) {
+    public void favoriteBy(User user) {
         boolean already = articleFavorites.stream()
-                .anyMatch(l -> l.getUserId().equals(userId));
+                .anyMatch(l -> l.getUser().equals(user));
         if (already) {
             throw new IllegalStateException("이미 좋아요를 눌렀습니다.");
         }
-        articleFavorites.add(new ArticleFavorite(userId, this));
+        articleFavorites.add(new ArticleFavorite(user, this));
     }
 
-    public void unFavoriteBy(Long userId) {
-        articleFavorites.removeIf(l -> l.getUserId().equals(userId));
+    public void unFavoriteBy(User user) {
+        articleFavorites.removeIf(l -> l.getUser().equals(user));
     }
 
 //    public void addComment(Comment comment) {

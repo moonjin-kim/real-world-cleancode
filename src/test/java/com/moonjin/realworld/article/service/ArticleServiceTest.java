@@ -265,7 +265,7 @@ class ArticleServiceTest {
 
         List<ArticleFavorite> articleFavorites = articleFavoriteRepository.findAll();
         assertEquals(1, articleFavorites.size());
-        assertEquals(user2.getId(), articleFavorites.get(0).getUserId());
+        assertEquals(user2, articleFavorites.get(0).getUser());
     }
 
     @Test

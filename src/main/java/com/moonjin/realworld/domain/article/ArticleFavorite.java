@@ -1,5 +1,6 @@
 package com.moonjin.realworld.domain.article;
 
+import com.moonjin.realworld.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,16 +21,17 @@ public class ArticleFavorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id", nullable = false)
     private Article article;
 
     @Builder
-    public ArticleFavorite(Long userId, Article article) {
-        this.userId = userId;
+    public ArticleFavorite(User user, Article article) {
+        this.user = user;
         this.article = article;
     }
 }

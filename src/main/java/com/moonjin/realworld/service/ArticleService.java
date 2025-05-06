@@ -96,9 +96,9 @@ public class ArticleService {
         Article article = articleRepository.findBySlug(slug)
                 .orElseThrow(NotFoundArticleException::new);
 
-        User user = userRepository.findById(article.getAuthor().getId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(Unauthorized::new);
-        article.favoriteBy(userId);
+        article.favoriteBy(user);
         articleRepository.save(article);
 
         return new ArticleResponse(article, Profile.of(user, true), true);
@@ -109,14 +109,17 @@ public class ArticleService {
         Article article = articleRepository.findBySlug(slug)
                 .orElseThrow(NotFoundArticleException::new);
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(NotFoundArticleException::new);
+
         articleFavoriteRepository.findByArticleAndUserId(article, userId)
                 .ifPresent(articleFavoriteRepository::delete);
-        article.unFavoriteBy(userId);
+        article.unFavoriteBy(user);
         articleRepository.save(article);
 
-        User user = userRepository.findById(article.getAuthor().getId())
+        User author = userRepository.findById(article.getAuthor().getId())
                 .orElseThrow(Unauthorized::new);
-        Profile profile = Profile.of(user, false);
+        Profile profile = Profile.of(author, false);
 
         return new ArticleResponse(article, profile, false);
     }

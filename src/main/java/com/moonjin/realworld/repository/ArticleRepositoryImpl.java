@@ -75,7 +75,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             return Expressions.constant(false);
         }
         return Expressions.cases()
-                .when(articleFavorite.userId.eq(userId))
+                .when(articleFavorite.user.id.eq(userId))
                 .then(true)
                 .otherwise(false);
     }
@@ -107,8 +107,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         // 2) ArticleFavorite.userId 와 매칭
         return article.articleFavorites
                 .any()
-                .userId
-                .eq(favUserId);
+                .user.id.eq(favUserId);
     }
 
     private BooleanExpression eqTag(String tag) {
