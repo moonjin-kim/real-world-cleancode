@@ -33,17 +33,17 @@ public class ArticleService {
 
     @Transactional
     public ArticleResponse create(ArticleCreate request, Long authorId) {
-        User user = userRepository.findById(authorId)
+        User author = userRepository.findById(authorId)
                 .orElseThrow(Unauthorized::new);
 
         List<Tag> tags = resolveTags(request.getTagList());
 
-        Article article = Article.of(request, authorId);
+        Article article = Article.of(request, author);
         article.addTags(tags);
 
         articleRepository.save(article);
 
-        return new ArticleResponse(article, Profile.of(user, false), false);
+        return new ArticleResponse(article, Profile.of(author, false), false);
     }
 
     @Transactional
@@ -51,7 +51,7 @@ public class ArticleService {
         Article article = articleRepository.findBySlug(slug)
                 .orElseThrow(NotFoundArticleException::new);
 
-        User user = userRepository.findById(article.getAuthorId())
+        User user = userRepository.findById(article.getAuthor().getId())
                 .orElseThrow(Unauthorized::new);
         boolean exists = false;
         if(sessionId != null) {
@@ -69,7 +69,7 @@ public class ArticleService {
             throw new Unauthorized();
         }
 
-        User user = userRepository.findById(article.getAuthorId())
+        User user = userRepository.findById(article.getAuthor().getId())
                 .orElseThrow(Unauthorized::new);
 
         article.edit(request);
@@ -96,7 +96,7 @@ public class ArticleService {
         Article article = articleRepository.findBySlug(slug)
                 .orElseThrow(NotFoundArticleException::new);
 
-        User user = userRepository.findById(article.getAuthorId())
+        User user = userRepository.findById(article.getAuthor().getId())
                 .orElseThrow(Unauthorized::new);
         article.favoriteBy(userId);
         articleRepository.save(article);
@@ -114,7 +114,7 @@ public class ArticleService {
         article.unFavoriteBy(userId);
         articleRepository.save(article);
 
-        User user = userRepository.findById(article.getAuthorId())
+        User user = userRepository.findById(article.getAuthor().getId())
                 .orElseThrow(Unauthorized::new);
         Profile profile = Profile.of(user, false);
 

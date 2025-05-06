@@ -30,14 +30,14 @@ class ArticleTest {
         Tag tag = Tag.of("Spring");
 
         // when
-        Article result = Article.of(request, 1L);
+        Article result = Article.of(request, author);
 
         // then
         Assertions.assertEquals("How to train your dragon", result.getTitle());
         Assertions.assertEquals("It takes a Jacobian", result.getBody());
         Assertions.assertEquals("Ever wonder how?", result.getDescription());
 
-        Assertions.assertEquals(1L, result.getAuthorId());
+        Assertions.assertEquals(author, result.getAuthor());
     }
 
 
@@ -58,7 +58,7 @@ class ArticleTest {
                 .build();
 
         Tag tag = Tag.of("Spring");
-        Article article = Article.of(request, 1L);
+        Article article = Article.of(request, author);
 
         // when
         String result = article.getSlug();
@@ -82,7 +82,7 @@ class ArticleTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(author.getId())
+                .author(author)
                 .build();
 
         ArticleEdit articleEdit = ArticleEdit.builder()
@@ -116,7 +116,7 @@ class ArticleTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(author.getId())
+                .author(author)
                 .build();
 
         ArticleEdit articleEdit = ArticleEdit.builder()
@@ -146,7 +146,7 @@ class ArticleTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(author.getId())
+                .author(author)
                 .build();
 
         ArticleEdit articleEdit = ArticleEdit.builder()

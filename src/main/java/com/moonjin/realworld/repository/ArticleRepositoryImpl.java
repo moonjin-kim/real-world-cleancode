@@ -39,7 +39,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
         List<ArticleResponse> content = queryFactory
                 .from(article)
-                .leftJoin(user).on(article.authorId.eq(user.id))
+                .leftJoin(user).on(article.author.eq(user))
                 .leftJoin(article.articleTags, articleTag)
                 .leftJoin(tag).on(articleTag.tag.eq(tag))
                 .leftJoin(article.articleFavorites, articleFavorite)
@@ -84,9 +84,9 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         if (StringUtils.isEmpty(name)) {
             return null;
         }
-        return article.authorId.eq(
+        return article.author.eq(
                 queryFactory
-                        .select(user.id)
+                        .select(user)
                         .from(user)
                         .where(user.username.eq(name))
                         .fetchOne()

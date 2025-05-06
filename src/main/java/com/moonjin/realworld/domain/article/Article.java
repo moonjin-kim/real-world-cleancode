@@ -1,5 +1,6 @@
 package com.moonjin.realworld.domain.article;
 
+import com.moonjin.realworld.domain.user.User;
 import com.moonjin.realworld.dto.request.ArticleCreate;
 import com.moonjin.realworld.dto.request.ArticleEdit;
 import com.moonjin.realworld.common.domain.DateEntity;
@@ -25,8 +26,9 @@ public class Article extends DateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column()
-    private Long authorId;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User author;
 
     @Column()
     private String slug;
@@ -53,17 +55,17 @@ public class Article extends DateEntity {
 //    private List<Comment> comments;
 
     @Builder
-    public Article(String body, String title, String description, Long authorId) {
+    public Article(String body, String title, String description, User author) {
         this.title = title;
         this.slug = makeSlug(title);
         this.description = description;
-        this.authorId = authorId;
+        this.author = author;
         this.body = body;
     }
 
-    public static Article of(ArticleCreate request, Long authorId) {
+    public static Article of(ArticleCreate request, User author) {
         return Article.builder()
-                .authorId(authorId)
+                .author(author)
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .body(request.getBody())
@@ -112,7 +114,7 @@ public class Article extends DateEntity {
     }
 
     public boolean isNotAuth(Long authorId) {
-        return !Objects.equals(this.authorId, authorId);
+        return !Objects.equals(this.author.getId(), authorId);
     }
 
     public List<String> getTagList() {

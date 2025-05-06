@@ -110,7 +110,7 @@ class ArticleControllerTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(sessionUser.getId())
+                .author(sessionUser)
                 .build()
         );
 
@@ -143,7 +143,7 @@ class ArticleControllerTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(sessionUser.getId())
+                .author(sessionUser)
                 .build()
         );
 

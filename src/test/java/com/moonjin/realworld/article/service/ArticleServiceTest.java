@@ -92,7 +92,7 @@ class ArticleServiceTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(user.getId())
+                .author(user)
                 .build()
         );
 
@@ -122,7 +122,7 @@ class ArticleServiceTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(user.getId())
+                .author(user)
                 .build()
         );
 
@@ -164,7 +164,7 @@ class ArticleServiceTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(user.getId())
+                .author(user)
                 .build()
         );
 
@@ -195,7 +195,7 @@ class ArticleServiceTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(user.getId())
+                .author(user)
                 .build()
         );
 
@@ -221,7 +221,7 @@ class ArticleServiceTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(user.getId())
+                .author(user)
                 .build()
         );
 
@@ -252,7 +252,7 @@ class ArticleServiceTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(user1.getId())
+                .author(user1)
                 .build()
         );
 
@@ -288,7 +288,7 @@ class ArticleServiceTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(user1.getId())
+                .author(user1)
                 .build()
         );
         this.articleService.favorite(article.getSlug(), user2.getId());
@@ -320,7 +320,7 @@ class ArticleServiceTest {
                 .title("How to train your dragon")
                 .body("It takes a Jacobian")
                 .description("Ever wonder how?")
-                .authorId(user1.getId())
+                .author(user1)
                 .build()
         );
         this.articleService.favorite(article.getSlug(), user2.getId());
