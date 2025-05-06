@@ -2,11 +2,11 @@ package com.moonjin.realworld.controller;
 
 import com.moonjin.realworld.common.annotation.AuthRequired;
 import com.moonjin.realworld.domain.user.User;
-import com.moonjin.realworld.dto.request.PutUser;
-import com.moonjin.realworld.dto.request.Signin;
-import com.moonjin.realworld.dto.request.Signup;
-import com.moonjin.realworld.dto.response.Profile;
-import com.moonjin.realworld.dto.response.UserDetail;
+import com.moonjin.realworld.dto.request.user.PutUser;
+import com.moonjin.realworld.dto.request.user.Signin;
+import com.moonjin.realworld.dto.request.user.Signup;
+import com.moonjin.realworld.dto.response.user.Profile;
+import com.moonjin.realworld.dto.response.user.UserDetail;
 import com.moonjin.realworld.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

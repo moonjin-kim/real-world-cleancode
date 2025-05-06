@@ -1,18 +1,18 @@
 package com.moonjin.realworld.repository;
 
-import com.moonjin.realworld.dto.request.ArticleParam;
-import com.moonjin.realworld.dto.response.ArticleListResponse;
-import com.moonjin.realworld.dto.response.ArticleResponse;
-import com.moonjin.realworld.dto.response.Profile;
+import com.moonjin.realworld.dto.request.article.ArticleParam;
+import com.moonjin.realworld.dto.response.article.ArticleListResponse;
+import com.moonjin.realworld.dto.response.article.ArticleResponse;
+import com.moonjin.realworld.dto.response.user.Profile;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -20,22 +20,19 @@ import static com.moonjin.realworld.domain.article.QArticle.article;
 import static com.moonjin.realworld.domain.article.QArticleFavorite.articleFavorite;
 import static com.moonjin.realworld.domain.article.QArticleTag.articleTag;
 import static com.moonjin.realworld.domain.article.QTag.tag;
+import static com.moonjin.realworld.domain.user.QFollow.follow;
 import static com.moonjin.realworld.domain.user.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.Projections.list;
+import static com.querydsl.core.types.dsl.Expressions.FALSE;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-
     @Override
     public ArticleListResponse getList(ArticleParam param, Long userId) {
-        long total = queryFactory
-                .select(article.count())
-                .from(article)
-                .where(eqAuthor(param.getAuthor()), eqTag(param.getTag()), eqFavorited(param.getFavorited()))
-                .fetchOne();
 
         List<ArticleResponse> content = queryFactory
                 .from(article)
@@ -45,7 +42,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .leftJoin(article.articleFavorites, articleFavorite)
                 .where(eqAuthor(param.getAuthor()), eqTag(param.getTag()), eqFavorited(param.getFavorited()))
                 .limit(param.getLimit())
-                .offset(param.getOffset() * 10)
+                .offset(param.getPageNum())
                 .transform(
                         groupBy(article.id).list(
                                 Projections.constructor(ArticleResponse.class,
@@ -56,18 +53,33 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                         list(tag.name),                   // <— tagList
                                         article._super.createdAt,
                                         article._super.updatedAt,
-                                        getFavoritedExpression(userId),      // favorited
-                                        article.articleFavorites.size().longValue(),  // favoritesCount
+                                        getFavoritedExpression(userId),
+                                        article.articleFavorites.size().longValue(),
                                         Projections.constructor(Profile.class,
                                                 user.username,
                                                 user.bio,
                                                 user.image,
-                                                Expressions.constant(false)     // following
+                                                getFollowingExpression(userId)     // following
                                         )
                                 )
                         )
                 );
-        return new ArticleListResponse(content, total);
+
+        long count = queryFactory
+                .select(article.countDistinct().coalesce(0L))
+                .from(article)
+                .leftJoin(user).on(article.author.eq(user))
+                .leftJoin(article.articleTags, articleTag)
+                .leftJoin(tag).on(articleTag.tag.eq(tag))
+                .leftJoin(article.articleFavorites, articleFavorite)
+                .where(
+                        eqAuthor(param.getAuthor()),
+                        eqTag(param.getTag()),
+                        eqFavorited(param.getFavorited())
+                )
+                .fetchOne();
+
+        return new ArticleListResponse(content, count);
     }
 
     private Expression<Boolean> getFavoritedExpression(Long userId) {
@@ -99,15 +111,11 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         }
 
         // 1) username → id
-        NumberExpression<Long> favUserId = (NumberExpression<Long>) JPAExpressions
-                .select(user.id)
-                .from(user)
-                .where(user.username.eq(username));
-
-        // 2) ArticleFavorite.userId 와 매칭
         return article.articleFavorites
                 .any()
-                .user.id.eq(favUserId);
+                .user
+                .username
+                .eq(username);
     }
 
     private BooleanExpression eqTag(String tag) {
@@ -116,5 +124,23 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         }
 
         return article.articleTags.any().tag.name.eq(tag);
+    }
+
+    /**
+     * 현재 로그인한 userId가 article.author를 팔로잉 중인지 확인
+     */
+    private BooleanExpression getFollowingExpression(Long userId) {
+        if (userId == null) {
+            return FALSE;
+        }
+
+        return JPAExpressions
+                .selectOne()
+                .from(follow)
+                .where(
+                        follow.fromUser.id.eq(userId),
+                        follow.toUser.id.eq(article.author.id)
+                )
+                .exists();
     }
 }

@@ -1,7 +1,7 @@
 package com.moonjin.realworld.repository;
 
-import com.moonjin.realworld.dto.request.ArticleParam;
-import com.moonjin.realworld.dto.response.ArticleListResponse;
+import com.moonjin.realworld.dto.request.article.ArticleParam;
+import com.moonjin.realworld.dto.response.article.ArticleListResponse;
 
 
 public interface ArticleRepositoryCustom {

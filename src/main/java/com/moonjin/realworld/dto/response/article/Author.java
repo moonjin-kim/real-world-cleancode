@@ -1,4 +1,4 @@
-package com.moonjin.realworld.dto.response;
+package com.moonjin.realworld.dto.response.article;
 
 import com.moonjin.realworld.domain.user.User;
 import lombok.Getter;

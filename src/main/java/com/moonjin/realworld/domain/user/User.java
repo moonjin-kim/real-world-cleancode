@@ -1,7 +1,7 @@
 package com.moonjin.realworld.domain.user;
 
-import com.moonjin.realworld.dto.request.PutUser;
-import com.moonjin.realworld.dto.request.Signup;
+import com.moonjin.realworld.dto.request.user.PutUser;
+import com.moonjin.realworld.dto.request.user.Signup;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

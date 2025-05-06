@@ -2,9 +2,9 @@ package com.moonjin.realworld.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moonjin.realworld.domain.user.User;
-import com.moonjin.realworld.dto.request.PutUser;
-import com.moonjin.realworld.dto.request.Signin;
-import com.moonjin.realworld.dto.request.Signup;
+import com.moonjin.realworld.dto.request.user.PutUser;
+import com.moonjin.realworld.dto.request.user.Signin;
+import com.moonjin.realworld.dto.request.user.Signup;
 import com.moonjin.realworld.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

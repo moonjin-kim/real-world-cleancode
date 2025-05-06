@@ -2,8 +2,8 @@ package com.moonjin.realworld.article.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moonjin.realworld.domain.article.Article;
-import com.moonjin.realworld.dto.request.ArticleCreate;
-import com.moonjin.realworld.dto.request.ArticleEdit;
+import com.moonjin.realworld.dto.request.article.ArticleCreate;
+import com.moonjin.realworld.dto.request.article.ArticleEdit;
 import com.moonjin.realworld.repository.ArticleFavoriteRepository;
 import com.moonjin.realworld.repository.ArticleRepository;
 import com.moonjin.realworld.repository.TagRepository;

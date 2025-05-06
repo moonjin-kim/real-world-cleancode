@@ -1,8 +1,7 @@
-package com.moonjin.realworld.dto.request;
+package com.moonjin.realworld.dto.request.article;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.List;
 

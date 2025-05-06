@@ -1,8 +1,8 @@
 package com.moonjin.realworld.domain.article;
 
 import com.moonjin.realworld.domain.user.User;
-import com.moonjin.realworld.dto.request.ArticleCreate;
-import com.moonjin.realworld.dto.request.ArticleEdit;
+import com.moonjin.realworld.dto.request.article.ArticleCreate;
+import com.moonjin.realworld.dto.request.article.ArticleEdit;
 import com.moonjin.realworld.common.domain.DateEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -1,6 +1,7 @@
-package com.moonjin.realworld.dto.response;
+package com.moonjin.realworld.dto.response.article;
 
 import com.moonjin.realworld.domain.article.Article;
+import com.moonjin.realworld.dto.response.user.Profile;
 import lombok.Builder;
 import lombok.Getter;
 

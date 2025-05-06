@@ -1,11 +1,11 @@
 package com.moonjin.realworld.controller;
 
-import com.moonjin.realworld.dto.request.ArticleCreate;
-import com.moonjin.realworld.dto.request.ArticleEdit;
-import com.moonjin.realworld.dto.request.ArticleParam;
-import com.moonjin.realworld.dto.response.ArticleListResponse;
-import com.moonjin.realworld.dto.response.ArticleResponse;
-import com.moonjin.realworld.dto.response.Tags;
+import com.moonjin.realworld.dto.request.article.ArticleCreate;
+import com.moonjin.realworld.dto.request.article.ArticleEdit;
+import com.moonjin.realworld.dto.request.article.ArticleParam;
+import com.moonjin.realworld.dto.response.article.ArticleListResponse;
+import com.moonjin.realworld.dto.response.article.ArticleResponse;
+import com.moonjin.realworld.dto.response.article.Tags;
 import com.moonjin.realworld.service.ArticleService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -31,6 +31,7 @@ public class ArticleController {
     public ArticleResponse getBySlug(HttpSession httpSession, @PathVariable String slug) {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
+        log.info("getBySlug {}", slug);
         return articleService.getBySlug(slug, userId);
     }
 

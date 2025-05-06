@@ -2,8 +2,8 @@ package com.moonjin.realworld.article.domain;
 
 import com.moonjin.realworld.domain.article.Article;
 import com.moonjin.realworld.domain.article.Tag;
-import com.moonjin.realworld.dto.request.ArticleCreate;
-import com.moonjin.realworld.dto.request.ArticleEdit;
+import com.moonjin.realworld.dto.request.article.ArticleCreate;
+import com.moonjin.realworld.dto.request.article.ArticleEdit;
 import com.moonjin.realworld.domain.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

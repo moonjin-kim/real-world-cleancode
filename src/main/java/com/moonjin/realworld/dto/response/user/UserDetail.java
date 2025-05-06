@@ -1,4 +1,4 @@
-package com.moonjin.realworld.dto.response;
+package com.moonjin.realworld.dto.response.user;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;

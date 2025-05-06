@@ -1,4 +1,4 @@
-package com.moonjin.realworld.dto.request;
+package com.moonjin.realworld.dto.request.user;
 
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
