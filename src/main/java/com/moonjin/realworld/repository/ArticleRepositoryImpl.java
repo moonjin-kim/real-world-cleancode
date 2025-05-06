@@ -1,5 +1,6 @@
 package com.moonjin.realworld.repository;
 
+import com.moonjin.realworld.dto.request.Page;
 import com.moonjin.realworld.dto.request.article.ArticleParam;
 import com.moonjin.realworld.dto.response.article.ArticleListResponse;
 import com.moonjin.realworld.dto.response.article.ArticleResponse;
@@ -25,6 +26,7 @@ import static com.moonjin.realworld.domain.user.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.Projections.list;
 import static com.querydsl.core.types.dsl.Expressions.FALSE;
+import static com.querydsl.jpa.JPAExpressions.select;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -82,6 +84,53 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         return new ArticleListResponse(content, count);
     }
 
+    @Override
+    public ArticleListResponse getFeed(Page param, Long userId) {
+
+        List<ArticleResponse> content = queryFactory
+                .from(article)
+                .leftJoin(user).on(article.author.eq(user))
+                .leftJoin(article.articleTags, articleTag)
+                .leftJoin(tag).on(articleTag.tag.eq(tag))
+                .leftJoin(article.articleFavorites, articleFavorite)
+                .where(eqFollowing(userId))
+                .limit(param.getLimit())
+                .offset(param.getPageNum())
+                .transform(
+                        groupBy(article.id).list(
+                                Projections.constructor(ArticleResponse.class,
+                                        article.slug,
+                                        article.title,
+                                        article.description,
+                                        article.body,
+                                        list(tag.name),                   // <— tagList
+                                        article._super.createdAt,
+                                        article._super.updatedAt,
+                                        getFavoritedExpression(userId),
+                                        article.articleFavorites.size().longValue(),
+                                        Projections.constructor(Profile.class,
+                                                user.username,
+                                                user.bio,
+                                                user.image,
+                                                Expressions.constant(true) // following
+                                        )
+                                )
+                        )
+                );
+
+        long count = queryFactory
+                .select(article.countDistinct().coalesce(0L))
+                .from(article)
+                .leftJoin(user).on(article.author.eq(user))
+                .leftJoin(article.articleTags, articleTag)
+                .leftJoin(tag).on(articleTag.tag.eq(tag))
+                .leftJoin(article.articleFavorites, articleFavorite)
+                .where(eqFollowing(userId))
+                .fetchOne();
+
+        return new ArticleListResponse(content, count);
+    }
+
     private Expression<Boolean> getFavoritedExpression(Long userId) {
         if (userId == null) {
             return Expressions.constant(false);
@@ -90,6 +139,18 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .when(articleFavorite.user.id.eq(userId))
                 .then(true)
                 .otherwise(false);
+    }
+
+    /**
+     * 내가(userId) 팔로우한 유저가 작성한 글만 조회
+     */
+    private BooleanExpression eqFollowing(Long userId) {
+        // 서브쿼리: follow 테이블에서 내가 팔로우한 userId 리스트로 필터
+        return article.author.id.in(
+                select(follow.toUser.id)   // follow.fromUser → follow.toUser
+                        .from(follow)
+                        .where(follow.fromUser.id.eq(userId))
+        );
     }
 
     private BooleanExpression eqAuthor(String name) {

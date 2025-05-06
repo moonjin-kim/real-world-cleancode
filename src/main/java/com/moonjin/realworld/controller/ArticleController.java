@@ -1,5 +1,6 @@
 package com.moonjin.realworld.controller;
 
+import com.moonjin.realworld.dto.request.Page;
 import com.moonjin.realworld.dto.request.article.ArticleCreate;
 import com.moonjin.realworld.dto.request.article.ArticleEdit;
 import com.moonjin.realworld.dto.request.article.ArticleParam;
@@ -84,6 +85,16 @@ public class ArticleController {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
         return articleService.getList(articleParam, userId);
+    }
+
+    @GetMapping("/articles/feed")
+    public ArticleListResponse getFeed(
+            HttpSession httpSession,
+            @ModelAttribute Page feedParam
+    ) {
+        Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
+
+        return articleService.getFeed(feedParam, userId);
     }
 
     @GetMapping("/tags")

@@ -3,6 +3,7 @@ package com.moonjin.realworld.service;
 import com.moonjin.realworld.domain.article.Article;
 import com.moonjin.realworld.domain.article.Tag;
 import com.moonjin.realworld.domain.user.User;
+import com.moonjin.realworld.dto.request.Page;
 import com.moonjin.realworld.dto.request.article.ArticleCreate;
 import com.moonjin.realworld.dto.request.article.ArticleEdit;
 import com.moonjin.realworld.dto.request.article.ArticleParam;
@@ -127,6 +128,11 @@ public class ArticleService {
     @Transactional()
     public ArticleListResponse getList(ArticleParam param, Long userId) {
         return articleRepository.getList(param, userId);
+    }
+
+    @Transactional()
+    public ArticleListResponse getFeed(Page param, Long userId) {
+        return articleRepository.getFeed(param, userId);
     }
 
     public Tags getTags() {
