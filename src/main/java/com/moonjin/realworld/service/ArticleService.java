@@ -1,22 +1,22 @@
 package com.moonjin.realworld.service;
 
 import com.moonjin.realworld.domain.article.Article;
+import com.moonjin.realworld.domain.article.Comment;
 import com.moonjin.realworld.domain.article.Tag;
 import com.moonjin.realworld.domain.user.User;
 import com.moonjin.realworld.dto.request.Page;
 import com.moonjin.realworld.dto.request.article.ArticleCreate;
 import com.moonjin.realworld.dto.request.article.ArticleEdit;
 import com.moonjin.realworld.dto.request.article.ArticleParam;
+import com.moonjin.realworld.dto.request.article.CommentCreate;
 import com.moonjin.realworld.dto.response.article.ArticleListResponse;
 import com.moonjin.realworld.dto.response.article.ArticleResponse;
+import com.moonjin.realworld.dto.response.article.CommentResponse;
 import com.moonjin.realworld.dto.response.article.Tags;
-import com.moonjin.realworld.repository.ArticleFavoriteRepository;
-import com.moonjin.realworld.repository.ArticleRepository;
-import com.moonjin.realworld.repository.TagRepository;
+import com.moonjin.realworld.repository.*;
 import com.moonjin.realworld.common.exception.NotFoundArticleException;
 import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.dto.response.user.Profile;
-import com.moonjin.realworld.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final TagRepository tagRepository;
     private final ArticleFavoriteRepository articleFavoriteRepository;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -126,7 +127,18 @@ public class ArticleService {
     }
 
     @Transactional
-    public
+    public CommentResponse addComment(String slug, CommentCreate request, Long userId) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(NotFoundArticleException::new);
+
+        User author = userRepository.findById(userId)
+                .orElseThrow(NotFoundArticleException::new);
+
+        Comment comment = Comment.of(article,author, request);
+        commentRepository.save(comment);
+
+        return CommentResponse.of(comment);
+    }
 
     @Transactional()
     public ArticleListResponse getList(ArticleParam param, Long userId) {

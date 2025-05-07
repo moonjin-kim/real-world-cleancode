@@ -4,8 +4,10 @@ import com.moonjin.realworld.dto.request.Page;
 import com.moonjin.realworld.dto.request.article.ArticleCreate;
 import com.moonjin.realworld.dto.request.article.ArticleEdit;
 import com.moonjin.realworld.dto.request.article.ArticleParam;
+import com.moonjin.realworld.dto.request.article.CommentCreate;
 import com.moonjin.realworld.dto.response.article.ArticleListResponse;
 import com.moonjin.realworld.dto.response.article.ArticleResponse;
+import com.moonjin.realworld.dto.response.article.CommentResponse;
 import com.moonjin.realworld.dto.response.article.Tags;
 import com.moonjin.realworld.service.ArticleService;
 import jakarta.servlet.http.HttpSession;
@@ -100,5 +102,12 @@ public class ArticleController {
     @GetMapping("/tags")
     public Tags getTags() {
         return articleService.getTags();
+    }
+
+    @PostMapping("/articles/{slug}/comments")
+    public CommentResponse addComment(HttpSession httpSession, @PathVariable String slug, @RequestBody @Valid CommentCreate request) {
+        Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
+
+        return articleService.addComment(slug, request, userId);
     }
 }

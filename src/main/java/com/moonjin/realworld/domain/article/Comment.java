@@ -2,6 +2,7 @@ package com.moonjin.realworld.domain.article;
 
 import com.moonjin.realworld.common.domain.DateEntity;
 import com.moonjin.realworld.domain.user.User;
+import com.moonjin.realworld.dto.request.article.CommentCreate;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,11 +38,11 @@ public class Comment extends DateEntity {
         this.article = article;
     }
 
-    public static Comment of(Comment comment, User author, Article article) {
+    public static Comment of(Article article, User author, CommentCreate request) {
         return Comment.builder()
                 .author(author)
                 .article(article)
-                .title(comment.body)
+                .title(request.getBody())
                 .build();
     }
 
