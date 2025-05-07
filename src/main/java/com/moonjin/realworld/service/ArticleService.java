@@ -125,6 +125,9 @@ public class ArticleService {
         return new ArticleResponse(article, profile, false);
     }
 
+    @Transactional
+    public
+
     @Transactional()
     public ArticleListResponse getList(ArticleParam param, Long userId) {
         return articleRepository.getList(param, userId);

@@ -1,5 +1,6 @@
 package com.moonjin.realworld.domain.article;
 
+import com.moonjin.realworld.common.domain.DateEntity;
 import com.moonjin.realworld.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "comments")
-public class Comment {
+public class Comment extends DateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +24,7 @@ public class Comment {
     private User author;
 
     @Column
-    private String title;
+    private String body;
 
     @ManyToOne
     @JoinColumn
@@ -32,7 +33,7 @@ public class Comment {
     @Builder
     public Comment(User author, String title, Article article) {
         this.author = author;
-        this.title = title;
+        this.body = title;
         this.article = article;
     }
 
@@ -40,7 +41,7 @@ public class Comment {
         return Comment.builder()
                 .author(author)
                 .article(article)
-                .title(comment.title)
+                .title(comment.body)
                 .build();
     }
 
