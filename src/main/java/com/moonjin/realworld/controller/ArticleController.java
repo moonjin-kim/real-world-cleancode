@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -109,5 +111,12 @@ public class ArticleController {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
         return articleService.addComment(slug, request, userId);
+    }
+
+    @GetMapping("/articles/{slug}/comments")
+    public List<CommentResponse> getComment(HttpSession httpSession, @PathVariable String slug) {
+        Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
+
+        return articleService.getComments(slug, userId);
     }
 }

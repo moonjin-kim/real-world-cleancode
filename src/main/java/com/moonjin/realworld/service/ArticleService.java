@@ -140,6 +140,16 @@ public class ArticleService {
         return CommentResponse.of(comment);
     }
 
+    @Transactional
+    public List<CommentResponse> getComments(String slug, Long userId) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(NotFoundArticleException::new);
+
+        List<Comment> comments = commentRepository.findCommentsByArticle(article);
+
+        return comments.stream().map(CommentResponse::of).collect(Collectors.toList());
+    }
+
     @Transactional()
     public ArticleListResponse getList(ArticleParam param, Long userId) {
         return articleRepository.getList(param, userId);
