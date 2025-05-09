@@ -114,7 +114,11 @@ public class ArticleController {
 
     @PostMapping("/articles/{slug}/comments")
     @AuthRequired
-    public CommentResponse addComment(HttpSession httpSession, @PathVariable String slug, @RequestBody @Valid CommentCreate request) {
+    public CommentResponse addComment(
+            HttpSession httpSession,
+            @PathVariable String slug,
+            @RequestBody @Valid CommentCreate request
+    ) {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
         return articleService.addComment(slug, request, userId);

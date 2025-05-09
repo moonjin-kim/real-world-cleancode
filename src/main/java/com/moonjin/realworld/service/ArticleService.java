@@ -19,11 +19,15 @@ import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.dto.response.user.Profile;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
@@ -32,6 +36,7 @@ public class ArticleService {
     private final ArticleFavoriteRepository articleFavoriteRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
     @Transactional
     public ArticleResponse create(ArticleCreate request, Long authorId) {
@@ -134,7 +139,7 @@ public class ArticleService {
         User author = userRepository.findById(userId)
                 .orElseThrow(NotFoundArticleException::new);
 
-        Comment comment = Comment.of(article,author, request);
+        Comment comment = Comment.of(article, author, request);
         commentRepository.save(comment);
 
         return CommentResponse.of(comment);
@@ -147,7 +152,22 @@ public class ArticleService {
 
         List<Comment> comments = commentRepository.findCommentsByArticle(article);
 
-        return comments.stream().map(CommentResponse::of).collect(Collectors.toList());
+        List<Long> authorIds = comments.stream()
+                .map(c -> c.getAuthor().getId())
+                .distinct()
+                .toList();
+
+        Set<Long> followed = new HashSet<>(
+                followRepository.findFollowedUserIds(userId, authorIds)
+        );
+
+        return comments.stream().map(comment -> {
+            boolean isFollowing = followed.contains(comment.getAuthor().getId());
+
+            Profile author = Profile.of(comment.getAuthor(), isFollowing);
+
+            return CommentResponse.of(comment, author);
+        }).collect(Collectors.toList());
     }
 
     @Transactional()

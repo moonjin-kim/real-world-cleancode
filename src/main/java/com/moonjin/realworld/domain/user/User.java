@@ -42,9 +42,6 @@ public class User {
     @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Follow> followings = new HashSet<>();
 
-//    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<Follow> followers = new HashSet<>();
-
     @Builder
     public User(String email, String password, String username, String bio, String image) {
         this.email = email;

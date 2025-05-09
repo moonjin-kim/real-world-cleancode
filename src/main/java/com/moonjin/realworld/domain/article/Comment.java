@@ -20,7 +20,7 @@ public class Comment extends DateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private User author;
 
@@ -32,17 +32,18 @@ public class Comment extends DateEntity {
     private Article article;
 
     @Builder
-    public Comment(User author, String title, Article article) {
+    public Comment(User author, String body, Article article) {
         this.author = author;
-        this.body = title;
+        this.body = body;
         this.article = article;
     }
 
     public static Comment of(Article article, User author, CommentCreate request) {
+        log.info("test");
         return Comment.builder()
                 .author(author)
                 .article(article)
-                .title(request.getBody())
+                .body(request.getBody())
                 .build();
     }
 
