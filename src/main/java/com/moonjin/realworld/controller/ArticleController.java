@@ -1,5 +1,6 @@
 package com.moonjin.realworld.controller;
 
+import com.moonjin.realworld.common.annotation.AuthRequired;
 import com.moonjin.realworld.dto.request.Page;
 import com.moonjin.realworld.dto.request.article.ArticleCreate;
 import com.moonjin.realworld.dto.request.article.ArticleEdit;
@@ -26,6 +27,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping("/articles")
+    @AuthRequired
     public ArticleResponse create(HttpSession httpSession, @RequestBody @Valid ArticleCreate request) {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
@@ -41,6 +43,7 @@ public class ArticleController {
     }
 
     @PutMapping("/articles/{slug}")
+    @AuthRequired
     public ArticleResponse getBySlug(
             HttpSession httpSession,
             @PathVariable String slug,
@@ -52,6 +55,7 @@ public class ArticleController {
     }
 
     @DeleteMapping("/articles/{slug}")
+    @AuthRequired
     public String delete(
             HttpSession httpSession,
             @PathVariable String slug
@@ -62,6 +66,7 @@ public class ArticleController {
     }
 
     @PostMapping("/articles/{slug}/favorite")
+    @AuthRequired
     public ArticleResponse favorite(
             HttpSession httpSession,
             @PathVariable String slug
@@ -72,6 +77,7 @@ public class ArticleController {
     }
 
     @DeleteMapping("/articles/{slug}/favorite")
+    @AuthRequired
     public ArticleResponse unFavorite(
             HttpSession httpSession,
             @PathVariable String slug
@@ -107,6 +113,7 @@ public class ArticleController {
     }
 
     @PostMapping("/articles/{slug}/comments")
+    @AuthRequired
     public CommentResponse addComment(HttpSession httpSession, @PathVariable String slug, @RequestBody @Valid CommentCreate request) {
         Long userId = (Long) httpSession.getAttribute(UserController.SESSION_USER_KEY);
 
