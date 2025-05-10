@@ -1,19 +1,20 @@
 package com.moonjin.realworld.article.service;
 
+import com.moonjin.realworld.common.exception.NotFoundArticleException;
 import com.moonjin.realworld.domain.article.Article;
 import com.moonjin.realworld.domain.article.ArticleFavorite;
+import com.moonjin.realworld.domain.article.Comment;
 import com.moonjin.realworld.domain.article.Tag;
 import com.moonjin.realworld.dto.request.article.ArticleCreate;
 import com.moonjin.realworld.dto.request.article.ArticleEdit;
+import com.moonjin.realworld.dto.request.article.CommentCreate;
 import com.moonjin.realworld.dto.response.article.ArticleResponse;
+import com.moonjin.realworld.dto.response.article.CommentResponse;
 import com.moonjin.realworld.dto.response.article.Tags;
-import com.moonjin.realworld.repository.ArticleFavoriteRepository;
-import com.moonjin.realworld.repository.ArticleRepository;
-import com.moonjin.realworld.repository.TagRepository;
+import com.moonjin.realworld.repository.*;
 import com.moonjin.realworld.common.exception.Unauthorized;
 import com.moonjin.realworld.service.ArticleService;
 import com.moonjin.realworld.domain.user.User;
-import com.moonjin.realworld.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -37,9 +38,12 @@ class ArticleServiceTest {
     private ArticleFavoriteRepository articleFavoriteRepository;
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private CommentRepository commentRepository;
 
     @AfterEach
     void clean() {
+        commentRepository.deleteAll();
         articleFavoriteRepository.deleteAll();
         articleRepository.deleteAll();
         tagRepository.deleteAll();
@@ -380,5 +384,58 @@ class ArticleServiceTest {
 
         // then
         assertEquals(3, result.getTags().size());
+    }
+
+    @Test
+    @DisplayName("유저가 article에 comment를 작성한다")
+    void addCommentTest1() {
+        // given
+        User user = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .author(user)
+                .build()
+        );
+
+        CommentCreate request = CommentCreate.builder()
+                .body("this Article is good!")
+                .build();
+
+
+        // when
+        CommentResponse result = this.articleService.addComment(article.getSlug(), request, user.getId());
+
+        // then
+        assertEquals(request.getBody(), result.getBody());
+        List<Comment> comments = commentRepository.findAll();
+        assertEquals(1, comments.size());
+        assertEquals(user, comments.get(0).getAuthor());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 article의 댓글은 작성할 수 없다.")
+    void addCommentTest2() {
+        // given
+        User user = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        CommentCreate request = CommentCreate.builder()
+                .body("this Article is good!")
+                .build();
+
+
+        // when
+        // then
+        assertThrows(NotFoundArticleException.class, () -> this.articleService.addComment("test", request, user.getId()));
     }
 }
