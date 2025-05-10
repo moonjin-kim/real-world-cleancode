@@ -438,4 +438,36 @@ class ArticleServiceTest {
         // then
         assertThrows(NotFoundArticleException.class, () -> this.articleService.addComment("test", request, user.getId()));
     }
+
+    @Test
+    @DisplayName("slug로 기사의 comment들을 조회한다.")
+    void getCommentTest1() {
+        // given
+        User user = userRepository.save(User.builder()
+                .email("realword@gmail.com")
+                .password("realworld123!")
+                .username("RealWorld")
+                .build());
+
+        Article article = articleRepository.save(Article.builder()
+                .title("How to train your dragon")
+                .body("It takes a Jacobian")
+                .description("Ever wonder how?")
+                .author(user)
+                .build()
+        );
+
+        CommentCreate request = CommentCreate.builder()
+                .body("this Article is good!")
+                .build();
+
+        Comment comment = commentRepository.save(Comment.of(article,user,request));
+
+
+        // when
+        List<CommentResponse> result = this.articleService.getComments(article.getSlug(), user.getId());
+
+        // then
+        assertEquals(request.getBody(), result.get(0).getBody());
+    }
 }
