@@ -42,7 +42,11 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .leftJoin(article.articleTags, articleTag)
                 .leftJoin(tag).on(articleTag.tag.eq(tag))
                 .leftJoin(article.articleFavorites, articleFavorite)
-                .where(eqAuthor(param.getAuthor()), eqTag(param.getTag()), eqFavorited(param.getFavorited()))
+                .where(
+                        eqAuthor(param.getAuthor()),
+                        eqTag(param.getTag()),
+                        eqFavorited(param.getFavorited())
+                )
                 .limit(param.getLimit())
                 .offset(param.getPageNum())
                 .transform(

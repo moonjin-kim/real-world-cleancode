@@ -135,11 +135,6 @@ public class User {
         return Objects.equals(id, user.id);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
     private void validateNotSelf(User target) {
         if (this.equals(target)) {
             throw new IllegalArgumentException("자기 자신은 팔로우할 수 없습니다.");

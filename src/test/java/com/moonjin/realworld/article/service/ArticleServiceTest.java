@@ -468,6 +468,6 @@ class ArticleServiceTest {
         List<CommentResponse> result = this.articleService.getComments(article.getSlug(), user.getId());
 
         // then
-        assertEquals(request.getBody(), result.get(0).getBody());
+        assertEquals(comment.getBody(), result.get(0).getBody());
     }
 }

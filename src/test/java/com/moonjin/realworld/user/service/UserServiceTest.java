@@ -16,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -265,8 +266,10 @@ class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> userService.getProfileFrom("RealWorld", 1L));
     }
 
+    //todo: 테스트 트랜잭션에 대한 고민
     @Test
     @DisplayName("유저 이름으로 팔로우 할 수 있다.")
+    @Transactional
     void followTest1() {
         // given
         User follower = User.builder()
@@ -295,9 +298,14 @@ class UserServiceTest {
         assertEquals("RealWorld2", result.getUsername());
         assertEquals(true, result.getFollowing());
 
-        User updatedFollower = userRepository.findByIdWithFollowings(follower.getId()).orElseThrow();
+        User updatedFollower = getUpdatedFollower(follower);
         assertTrue(updatedFollower.getFollowings().stream()
                 .anyMatch(u -> u.getToUser().equals(followee)));
+    }
+
+    private User getUpdatedFollower(User follower) {
+        User updatedFollower = loadUserWithFollowings(follower);
+        return updatedFollower;
     }
 
     @Test
@@ -395,9 +403,13 @@ class UserServiceTest {
         assertEquals("RealWorld2", result.getUsername());
         assertEquals(false, result.getFollowing());
 
-        User updatedFollower = userRepository.findByIdWithFollowings(follower.getId()).orElseThrow();
+        User updatedFollower = loadUserWithFollowings(follower);
         assertFalse(updatedFollower.getFollowings().stream()
                 .anyMatch(u -> u.getToUser().equals(followee)));
+    }
+
+    private User loadUserWithFollowings(User follower) {
+        return userRepository.findByIdWithFollowings(follower.getId()).orElseThrow();
     }
 
     @Test

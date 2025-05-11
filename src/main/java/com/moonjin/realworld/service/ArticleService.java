@@ -105,6 +105,7 @@ public class ArticleService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(Unauthorized::new);
+
         article.favoriteBy(user);
         articleRepository.save(article);
 
