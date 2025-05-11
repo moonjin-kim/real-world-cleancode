@@ -1,11 +1,11 @@
 package com.moonjin.realworld.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moonjin.realworld.user.domain.User;
-import com.moonjin.realworld.user.dto.request.PutUser;
-import com.moonjin.realworld.user.dto.request.Signin;
-import com.moonjin.realworld.user.dto.request.Signup;
-import com.moonjin.realworld.user.repository.UserRepository;
+import com.moonjin.realworld.domain.user.User;
+import com.moonjin.realworld.dto.request.user.PutUser;
+import com.moonjin.realworld.dto.request.user.Signin;
+import com.moonjin.realworld.dto.request.user.Signup;
+import com.moonjin.realworld.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -238,9 +238,9 @@ class UserControllerTest {
                 )
                 // 3. 응답 상태·payload 검증
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.profile.bio").value("I like to skateboard"))
-                .andExpect(jsonPath("$.profile.image").value("https://i.stack.imgur.com/xHWG8.jpg"))
-                .andExpect(jsonPath("$.profile.username").value(sessionUser.getUsername()));
+                .andExpect(jsonPath("$.bio").value("I like to skateboard"))
+                .andExpect(jsonPath("$.image").value("https://i.stack.imgur.com/xHWG8.jpg"))
+                .andExpect(jsonPath("$.username").value(sessionUser.getUsername()));
 
         //then
     }
@@ -295,10 +295,10 @@ class UserControllerTest {
                 )
                 // 3. 응답 상태·payload 검증
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.profile.bio").value("I like to skateboard"))
-                .andExpect(jsonPath("$.profile.image").value("https://i.stack.imgur.com/xHWG8.jpg"))
-                .andExpect(jsonPath("$.profile.username").value("testTarget"))
-                .andExpect(jsonPath("$.profile.following").value("true"));
+                .andExpect(jsonPath("$.bio").value("I like to skateboard"))
+                .andExpect(jsonPath("$.image").value("https://i.stack.imgur.com/xHWG8.jpg"))
+                .andExpect(jsonPath("$.username").value("testTarget"))
+                .andExpect(jsonPath("$.following").value("true"));
 
         //then
     }
@@ -369,10 +369,10 @@ class UserControllerTest {
                 )
                 // 3. 응답 상태·payload 검증
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.profile.bio").value("I like to skateboard"))
-                .andExpect(jsonPath("$.profile.image").value("https://i.stack.imgur.com/xHWG8.jpg"))
-                .andExpect(jsonPath("$.profile.username").value("testTarget"))
-                .andExpect(jsonPath("$.profile.following").value("false"));
+                .andExpect(jsonPath("$.bio").value("I like to skateboard"))
+                .andExpect(jsonPath("$.image").value("https://i.stack.imgur.com/xHWG8.jpg"))
+                .andExpect(jsonPath("$.username").value("testTarget"))
+                .andExpect(jsonPath("$.following").value("false"));
 
         //then
     }
