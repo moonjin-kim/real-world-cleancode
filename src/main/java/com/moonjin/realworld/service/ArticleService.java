@@ -153,17 +153,10 @@ public class ArticleService {
 
         List<Comment> comments = commentRepository.findCommentsByArticle(article);
 
-        List<Long> authorIds = comments.stream()
-                .map(c -> c.getAuthor().getId())
-                .distinct()
-                .toList();
-
-        Set<Long> followed = new HashSet<>(
-                followRepository.findFollowedUserIds(userId, authorIds)
-        );
+        Set<Long> followers = getFollowedList(userId, comments);
 
         return comments.stream().map(comment -> {
-            boolean isFollowing = followed.contains(comment.getAuthor().getId());
+            boolean isFollowing = followers.contains(comment.getAuthor().getId());
 
             Profile author = Profile.of(comment.getAuthor(), isFollowing);
 
@@ -190,6 +183,18 @@ public class ArticleService {
                 .map(name -> tagRepository.findByName(name)
                         .orElseGet(() -> tagRepository.save(new Tag(name))))
                 .toList();
+    }
+
+
+    private Set<Long> getFollowedList(Long userId, List<Comment> comments) {
+        List<Long> authorIds = comments.stream()
+                .map(c -> c.getAuthor().getId())
+                .distinct()
+                .toList();
+
+        return new HashSet<>(
+                followRepository.findFollowedUserIds(userId, authorIds)
+        );
     }
 
 }

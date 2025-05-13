@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
 public class ArticleResponse {
     String slug;
     String title;
@@ -25,7 +24,19 @@ public class ArticleResponse {
     public ArticleResponse() {
     }
 
-    public ArticleResponse(String slug, String title, String description, String body, List<String> tagList, LocalDateTime createdAt, LocalDateTime updatedAt, boolean favorited, Long favoritesCount, Profile author) {
+    @Builder
+    public ArticleResponse(
+            String slug,
+            String title,
+            String description,
+            String body,
+            List<String> tagList,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            boolean favorited,
+            Long favoritesCount,
+            Profile author
+    ) {
         this.slug = slug;
         this.title = title;
         this.description = description;
